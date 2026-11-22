@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Wordy — Eğlenceli & Akıllı Kelime Pratiği</title>
+  <meta name="description" content="iOS tarzı eğlenceli, çevrimdışı çalışabilen akıllı İngilizce kelime öğrenme ve tekrar uygulaması.">
+
+  <!-- iOS PWA Capabilities -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Wordy">
+  <meta name="theme-color" content="#F2F5FC" id="meta-theme-color">
+
+  <!-- Google Fonts: Baloo Thambi 2 for Wordy Logo & Wanted Sans Variable for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.min.css">
+
+  <style>
+    :root {
+      --ios-bg: #F2F5FC;
+      --ios-card: rgba(255, 255, 255, 0.98);
+      --ios-subcard: rgba(255, 255, 255, 0.92);
+      --ios-text: #141B2D;
+      --ios-subtext: #5E687E;
+      --ios-border: rgba(20, 27, 45, 0.08);
+      --ios-shadow: 0 8px 24px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(15, 23, 42, 0.04);
+      --ios-shadow-hover: 0 14px 30px rgba(15, 23, 42, 0.11), 0 4px 10px rgba(15, 23, 42, 0.05);
+      --ios-blue: #2563EB;
+
+      --pastel-blue-bg: #E0ECFF;
+      --pastel-blue-text: #2563EB;
+      --pastel-emerald-bg: #D9F7EA;
+      --pastel-emerald-text: #059669;
+      --pastel-amber-bg: #FEF0D2;
+      --pastel-amber-text: #D97706;
+
+      --opt-indigo: #9D85E8;     /* Soft Lilac */
+      --opt-emerald: #6BA889;    /* Sage Green */
+      --opt-amber: #E489B2;      /* Cotton Candy Pink */
+      --opt-rose: #76A2E3;       /* Soft Periwinkle */
+
+      --hint-cyan: #48B5C8;      /* Light Soft Cyan */
+      --hint-cyan-hover: #3BA3B6;
+
+      --danger: #DC2626;
+      --success: #16A34A;
+    }
+
+    body.dark-theme {
+      --ios-bg: #0B132B;
+      --ios-card: rgba(28, 37, 65, 0.98);
+      --ios-subcard: rgba(23, 32, 58, 0.94);
+      --ios-text: #F1F5F9;
+      --ios-subtext: #94A3B8;
+      --ios-border: rgba(255, 255, 255, 0.1);
+      --ios-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+      --ios-shadow-hover: 0 16px 34px rgba(0, 0, 0, 0.42);
+      --ios-blue: #60A5FA;
+
+      --pastel-blue-bg: rgba(59, 130, 246, 0.2);
+      --pastel-blue-text: #93C5FD;
+      --pastel-emerald-bg: rgba(16, 185, 129, 0.2);
+      --pastel-emerald-text: #6EE7B7;
+      --pastel-amber-bg: rgba(245, 158, 11, 0.2);
+      --pastel-amber-text: #FCD34D;
+
+      --opt-indigo: #745EC2;     /* Deeper Lilac */
+      --opt-emerald: #4B7F65;    /* Deeper Sage Green */
+      --opt-amber: #B55B84;      /* Deeper Cotton Candy Pink */
+      --opt-rose: #4E76B5;       /* Deeper Periwinkle */
+
+      --hint-cyan: #2B7E8F;      /* Deeper Soft Cyan */
+      --hint-cyan-hover: #236978;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      font-family: "Wanted Sans Variable", "Wanted Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--ios-bg);
+      color: var(--ios-text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea { font-family: inherit; }
+
+    #confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+
+    .iphone-frame {
+      max-width: 440px;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: calc(16px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* TOP BAR & ICON-ONLY SETTINGS DRAWER */
+    .top-action-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .icon-action-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--ios-border);
+      background: var(--ios-card);
+      color: var(--ios-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--ios-shadow);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .icon-action-btn:hover { transform: translateY(-2px) scale(1.03); }
+    .icon-action-btn:active { transform: scale(0.94); }
+    .icon-action-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+
+    .icon-action-btn.active-pref {
+      background: var(--pastel-blue-bg);
+      color: var(--pastel-blue-text);
+      border-color: rgba(37, 99, 235, 0.22);
+    }
+
+    .icon-action-btn.muted-pref {
+      opacity: 0.48;
+    }
+/* HERO LOGO & STREAK */
+    .ios-header { text-align: center; padding: 8px 0 20px; }
+
+    .wordy-logo {
+      font-family: 'Baloo Thambi 2', cursive, sans-serif;
+      font-size: 62px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1.5px;
+      display: inline-flex;
+      justify-content: center;
+      gap: 2px;
+      user-select: none;
+      animation: logoPop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .wordy-logo span { display: inline-block; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); text-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
+    .wordy-logo span:hover { transform: translateY(-6px) rotate(-4deg) scale(1.08); }
+    .char-w { color: #6366F1; } .char-o { color: #EC4899; } .char-r { color: #F59E0B; } .char-d { color: #10B981; } .char-y { color: #3B82F6; }
+
+    .ios-subtitle {
+      margin-top: 6px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ios-subtext);
+      letter-spacing: -0.1px;
+      animation: fadeSlideUp 0.55s ease 0.12s both;
+    }
+
+    .daily-stats-bar {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--ios-card);
+      border: 1px solid var(--ios-border);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      font-size: 12.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      animation: fadeSlideUp 0.55s ease 0.18s both;
+    }
+
+    .stat-pill-val {
+      color: var(--ios-blue);
+      font-weight: 800;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--ios-border);
+    }
+
+    /* MAIN DASHBOARD CARDS */
+    .main-dashboard { display: flex; flex-direction: column; gap: 14px; }
+
+    .ios-card {
+      background: var(--ios-card);
+      border: 1px solid var(--ios-border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--ios-shadow);
+      cursor: pointer;
+      transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.26s ease, background-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ios-card:hover { transform: translateY(-4px) scale(1.015); box-shadow: var(--ios-shadow-hover); }
+    .ios-card:active { transform: scale(0.975); }
+
+    .animated-card-1 { animation: cardSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+    .animated-card-2 { animation: cardSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both; }
+    .animated-card-3 { animation: cardSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
+    .animated-card-tip { animation: cardSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.42s both; }
+
+    .icon-container { width: 48px; height: 48px; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-container svg { width: 24px; height: 24px; stroke-width: 2.2; }
+
+    /* PHONE SHARE CARD */
+    .phone-tip-card { background: var(--ios-subcard); border: 1.5px dashed var(--ios-border); padding: 16px 18px; cursor: pointer; }
+    .phone-link-drawer { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--ios-border); display: none; flex-direction: column; gap: 8px; animation: fadeSlideUp 0.25s ease both; }
+    .phone-link-drawer.open { display: flex; }
+    .phone-link-row { display: flex; gap: 8px; align-items: center; }
+    .phone-link-input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--ios-border); background: var(--ios-bg); color: var(--ios-text); font-size: 12.5px; font-weight: 600; outline: none; }
+    .btn-copy-link { padding: 10px 14px; min-height: 40px; border-radius: 12px; border: none; background: var(--ios-blue); color: #FFFFFF; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: transform 0.15s ease; }
+    .btn-copy-link:active { transform: scale(0.95); }
+    .copy-feedback { font-size: 12.5px; font-weight: 700; color: var(--success); display: none; align-items: center; gap: 5px; }
+    .copy-feedback.visible { display: flex; animation: fadeSlideUp 0.2s ease both; }
+
+    /* MODALS */
+    .view-modal { position: fixed; inset: 0; max-width: 440px; margin: 0 auto; background: var(--ios-bg); z-index: 100; display: none; flex-direction: column; overflow-y: auto; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+    .view-modal.active { display: flex; animation: modalSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--ios-border); background: var(--ios-bg); position: sticky; top: 0; z-index: 20; }
+    .btn-back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 8px 0 2px; background: none; border: none; color: var(--ios-blue); font-size: 16px; font-weight: 700; cursor: pointer; transition: opacity 0.15s ease, transform 0.15s ease; }
+    .btn-back:active { transform: scale(0.95); opacity: 0.7; }
+    .btn-back svg { width: 20px; height: 20px; stroke-width: 2.5; }
+
+    .btn-primary { width: 100%; min-height: 48px; padding: 13px 20px; border-radius: 16px; border: none; background: var(--ios-blue); color: #FFFFFF; font-size: 15.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22); transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary { width: 100%; min-height: 46px; padding: 12px 18px; border-radius: 16px; border: 1px solid var(--ios-border); background: var(--ios-card); color: var(--ios-text); font-size: 14.5px; font-weight: 700; cursor: pointer; }
+
+    /* MINIMAL LEVEL SELECTOR */
+    .level-selector-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .level-select-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; min-height: 52px; border-radius: 16px; background: var(--ios-card); border: 1.5px solid var(--ios-border); box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease; user-select: none; }
+    .level-select-row:active { transform: scale(0.98); }
+    .level-select-row.selected { border-color: var(--ios-blue); }
+    .level-select-label { font-size: 16px; font-weight: 800; letter-spacing: -0.2px; color: var(--ios-text); }
+    .soft-tickbox { width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--ios-subtext); display: flex; align-items: center; justify-content: center; transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .level-select-row.selected .soft-tickbox { background: var(--ios-blue); border-color: var(--ios-blue); transform: scale(1.05); }
+    .soft-tickbox svg { width: 14px; height: 14px; color: #FFFFFF; stroke-width: 3; opacity: 0; transform: scale(0.6); transition: opacity 0.15s ease, transform 0.18s ease; }
+    .level-select-row.selected .soft-tickbox svg { opacity: 1; transform: scale(1); }
+
+    /* QUESTION BOX & SLIDE TRANSITION */
+    .question-box {
+      background: var(--ios-card);
+      border: 1px solid var(--ios-border);
+      border-radius: 24px;
+      padding: 22px 20px;
+      box-shadow: var(--ios-shadow);
+      position: relative;
+      animation: slideTransition 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .speak-btn { position: absolute; top: 16px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--ios-border); background: var(--pastel-blue-bg); color: var(--pastel-blue-text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .speak-btn:hover { transform: scale(1.08); }
+    .speak-btn:active { transform: scale(0.92); }
+    .speak-btn.speaking { animation: pulseSpeak 0.6s ease infinite alternate; }
+    .badge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .level-badge { font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: var(--pastel-blue-bg); color: var(--pastel-blue-text); letter-spacing: 0.3px; }
+    .score-badge { font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: var(--pastel-amber-bg); color: var(--pastel-amber-text); font-variant-numeric: tabular-nums; display: inline-block; }
+    .score-badge.pop { animation: badgePop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .word-title { font-size: 32px; font-weight: 800; letter-spacing: -0.6px; margin-bottom: 10px; padding-right: 46px; word-break: break-word; }
+    .word-sentence { font-size: 15px; line-height: 1.55; color: var(--ios-subtext); font-weight: 500; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; animation: slideTransition 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both; }
+    .option-btn { width: 100%; min-height: 52px; padding: 14px 18px; border-radius: 16px; border: none; color: #FFFFFF; font-size: 15.5px; font-weight: 700; text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1); transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease, filter 0.16s ease; }
+    .option-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.04); }
+    .option-btn:active:not(:disabled) { transform: scale(0.97); }
+    .option-btn:disabled { cursor: default; }
+    .option-btn.opt-0 { background: var(--opt-indigo); }
+    .option-btn.opt-1 { background: var(--opt-emerald); }
+    .option-btn.opt-2 { background: var(--opt-amber); }
+    .option-btn.opt-3 { background: var(--opt-rose); }
+    .option-btn.correct { background: var(--success) !important; transform: scale(1.02); }
+    .option-btn.wrong { background: var(--danger) !important; animation: shake 0.36s ease; }
+    .option-btn.dimmed { opacity: 0.45; }
+
+    .btn-hint-cyan { align-self: flex-start; min-height: 40px; padding: 9px 16px; border-radius: 12px; border: none; background: var(--hint-cyan); color: #FFFFFF; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.18s ease, transform 0.15s ease; }
+    .btn-hint-cyan:hover { background: var(--hint-cyan-hover); }
+    .btn-hint-cyan:active { transform: scale(0.96); }
+    .hint-box { margin-top: 10px; padding: 10px 14px; border-radius: 12px; background: var(--ios-bg); border: 1px solid var(--ios-border); font-size: 14px; font-weight: 700; color: var(--ios-text); animation: fadeSlideUp 0.2s ease both; }
+
+    .sort-select { padding: 7px 12px; border-radius: 10px; border: 1px solid var(--ios-border); background: var(--ios-card); color: var(--ios-text); font-size: 12.5px; font-weight: 700; outline: none; }
+    .filter-pill-container { display: flex; flex-wrap: wrap; gap: 7px; padding: 8px 20px 10px; }
+    .filter-pill { padding: 7px 13px; min-height: 34px; border-radius: 999px; border: 1px solid var(--ios-border); background: var(--ios-card); color: var(--ios-subtext); font-size: 12.5px; font-weight: 800; cursor: pointer; transition: all 0.18s ease; }
+    .filter-pill.active { background: var(--ios-blue); color: #FFFFFF; border-color: var(--ios-blue); }
+    .pool-item { background: var(--ios-card); border: 1px solid var(--ios-border); border-radius: 18px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; gap: 6px; animation: fadeSlideUp 0.25s ease both; }
+
+    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .match-col { display: flex; flex-direction: column; gap: 10px; }
+    .match-col-header { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: var(--ios-subtext); text-align: center; margin-bottom: 2px; }
+    .match-card { min-height: 54px; padding: 12px; border-radius: 15px; background: var(--ios-card); border: 1.5px solid var(--ios-border); color: var(--ios-text); font-size: 14px; font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05); transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease; }
+    .match-card:active:not(:disabled) { transform: scale(0.96); }
+    .match-card.selected { border-color: var(--ios-blue); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); transform: scale(1.02); }
+    .match-card.matched { background: var(--pastel-emerald-bg); border-color: var(--success); color: var(--pastel-emerald-text); opacity: 0.72; cursor: default; }
+    .match-card.wrong { background: var(--danger); border-color: var(--danger); color: #FFFFFF; animation: shake 0.38s ease; }
+
+    @keyframes logoPop { 0% { opacity: 0; transform: scale(0.75) translateY(14px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes cardSlide { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes slideTransition { 0% { opacity: 0; transform: translateX(18px); } 100% { opacity: 1; transform: translateX(0); } }
+    @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.26); } 100% { transform: scale(1); } }
+    @keyframes panelDrop { 0% { opacity: 0; transform: translateY(-8px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes modalSlideIn { 0% { opacity: 0; transform: translateY(26px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+    @keyframes pulseSpeak { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+<div class="iphone-frame">
+    <!-- TOP BAR: PREFS TOGGLE & THEME TOGGLE -->
+    <div class="top-action-bar">
+      <button class="icon-action-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Temayı Değiştir">
+        <svg id="theme-icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+        </svg>
+        <svg id="theme-icon-sun" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </button>
+    </div>
+
+<header class="ios-header">
+      <div class="wordy-logo">
+        <span class="char-w">W</span><span class="char-o">o</span><span class="char-r">r</span><span class="char-d">d</span><span class="char-y">y</span>
+      </div>
+      <p class="ios-subtitle">Eğlenceli & Akıllı Kelime Pratiğin</p>
+      <div class="daily-stats-bar" id="daily-stats-bar" style="gap: 6px; padding: 7px 14px;">
+        <svg id="streak-flame-icon" width="19" height="19" viewBox="0 0 24 24" fill="currentColor" style="color: #94A3B8; transition: color 0.35s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
+          <path d="M12.7 2.2a1 1 0 0 0-1.4.2C9.5 4.8 8.3 7.1 8.1 9.4c-.9-.6-1.5-1.5-1.7-2.5a1 1 0 0 0-1.7-.5C3.1 8.2 2.2 10.6 2.5 13.3 3 18.1 7 21.8 12 22c5.3.2 9.7-3.9 9.7-9.2 0-4.4-3.1-8.1-9-10.6Z"/>
+        </svg>
+        <span id="stat-streak-count" style="font-size: 14px; font-weight: 800; color: var(--ios-subtext); transition: color 0.35s ease;">0</span>
+      </div>
+    </header>
+
+    <main class="main-dashboard">
+      <div class="ios-card animated-card-1" onclick="openView('view-review')" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div class="icon-container" style="background: var(--pastel-blue-bg); color: var(--pastel-blue-text);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.3px;">Tekrar Et</div>
+            <div style="font-size: 13px; color: var(--ios-subtext); margin-top: 3px;" id="review-card-subtitle">Seviyeni seç ve akıllı tekrar yap</div>
+          </div>
+        </div>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--ios-subtext); opacity: 0.6;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+
+      <div class="ios-card animated-card-2" onclick="openView('view-pool')" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div class="icon-container" style="background: var(--pastel-emerald-bg); color: var(--pastel-emerald-text);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.3px;">Kelime Havuzum</div>
+            <div style="font-size: 13px; color: var(--ios-subtext); margin-top: 3px;" id="pool-card-subtitle">0 kelime öğreniliyor</div>
+          </div>
+        </div>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--ios-subtext); opacity: 0.6;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+
+      <div class="ios-card animated-card-3" onclick="openView('view-activities')" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div class="icon-container" style="background: var(--pastel-amber-bg); color: var(--pastel-amber-text);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.3px;">Etkinlikler</div>
+            <div style="font-size: 13px; color: var(--ios-subtext); margin-top: 3px;">Eşleştirme, Boşluk Doldurma, Karışık</div>
+          </div>
+        </div>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--ios-subtext); opacity: 0.6;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+
+      <div class="ios-card animated-card-tip phone-tip-card" onclick="togglePhoneLinkDrawer(event)">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--ios-blue);">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            <span style="font-size: 13.5px; font-weight: 800; letter-spacing: -0.1px;">Çevrimdışı & Telefonda Kullanım</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 700; color: var(--ios-blue);">Link Al</span>
+        </div>
+        <p style="font-size: 12.5px; color: var(--ios-subtext); margin-top: 5px; line-height: 1.45;">
+          Telefonda açmak için dokun ve linki kopyala. Safari'de <strong>Paylaş › Ana Ekrana Ekle</strong> ile çevrimdışı da kullanabilirsin.
+        </p>
+
+        <div id="phone-link-drawer" class="phone-link-drawer" onclick="event.stopPropagation()">
+          <div class="phone-link-row">
+            <input type="text" id="phone-share-url" class="phone-link-input" readonly>
+            <button type="button" class="btn-copy-link" onclick="copyPhoneLink(event)">Kopyala</button>
+          </div>
+          <div id="copy-feedback" class="copy-feedback">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>Link kopyalandı!</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="view-review" class="view-modal">
+    <div class="nav-bar">
+      <button class="btn-back" onclick="handleReviewBack()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Geri
+      </button>
+      <div id="review-header-title" style="font-weight: 800; font-size: 17px; letter-spacing: -0.2px;">Tekrar Et</div>
+      <div style="width: 44px;"></div>
+    </div>
+    <div id="review-content" style="padding: 16px 20px 28px; display: flex; flex-direction: column; flex: 1; justify-content: space-between;"></div>
+  </div>
+
+  <div id="view-pool" class="view-modal">
+    <div class="nav-bar">
+      <button class="btn-back" onclick="closeView('view-pool')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Geri
+      </button>
+      <div style="font-weight: 800; font-size: 17px; letter-spacing: -0.2px;">Kelime Havuzum</div>
+      <button onclick="resetPool()" style="background:none;border:none;color:var(--danger);font-size:12.5px;font-weight:700;cursor:pointer;min-height:44px;padding:0 4px;">Sıfırla</button>
+    </div>
+
+    <div id="add-word-section" style="padding: 14px 20px 8px;">
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="new-word-input" placeholder="Yeni İngilizce kelime yaz..."
+               onkeydown="if(event.key==='Enter') handleAddWord()"
+               style="flex: 1; padding: 13px 16px; border-radius: 16px; border: 1.5px solid var(--ios-border); background: var(--ios-card); color: var(--ios-text); font-size: 15px; font-weight: 600; outline: none;">
+        <button onclick="handleAddWord()" class="btn-primary" style="width: auto; padding: 12px 20px; border-radius: 16px;">Ekle</button>
+      </div>
+      <div id="word-add-status" style="font-size: 13px; margin-top: 8px; font-weight: 600; display: none;"></div>
+    </div>
+
+    <div style="padding: 10px 20px 4px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--ios-subtext);">Seviye Filtresi</span>
+      <select id="pool-sort-select" class="sort-select" onchange="handleSortChange(this.value)">
+        <option value="level-asc">Seviye (A1 → C2)</option>
+        <option value="level-desc">Seviye (C2 → A1)</option>
+        <option value="score-asc">Puan (Düşük → Yüksek)</option>
+        <option value="score-desc">Puan (Yüksek → Düşük)</option>
+      </select>
+    </div>
+
+    <div class="filter-pill-container" id="level-filter-bar">
+      <button class="filter-pill active" onclick="filterByLevel('ALL', this)">Tümü</button>
+      <button class="filter-pill" onclick="filterByLevel('A1', this)">A1</button>
+      <button class="filter-pill" onclick="filterByLevel('A2', this)">A2</button>
+      <button class="filter-pill" onclick="filterByLevel('B1', this)">B1</button>
+      <button class="filter-pill" onclick="filterByLevel('B2', this)">B2</button>
+      <button class="filter-pill" onclick="filterByLevel('C1', this)">C1</button>
+      <button class="filter-pill" onclick="filterByLevel('C2', this)">C2</button>
+    </div>
+
+    <div id="pool-list" style="padding: 8px 20px 28px; display: flex; flex-direction: column; gap: 12px;"></div>
+  </div>
+
+  <div id="view-activities" class="view-modal">
+    <div class="nav-bar">
+      <button class="btn-back" onclick="handleActivitiesBack()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Geri
+      </button>
+      <div id="activities-title" style="font-weight: 800; font-size: 17px; letter-spacing: -0.2px;">Etkinlikler</div>
+      <div style="width: 44px;"></div>
+    </div>
+    <div id="activities-content" style="padding: 20px; flex: 1; display: flex; flex-direction: column;"></div>
+  </div>
+
+  <script>
+    const DICTIONARY = [
+      // A1
+      { word: "apple", tr: "elma", sentence: "She eats a fresh red apple every morning.", level: "A1" },
+      { word: "book", tr: "kitap", sentence: "I am reading an interesting book tonight.", level: "A1" },
+      { word: "house", tr: "ev", sentence: "Their new house has a big sunny garden.", level: "A1" },
+      { word: "water", tr: "su", sentence: "Please drink a glass of cold water.", level: "A1" },
+      { word: "friend", tr: "arkadaş", sentence: "He is my closest friend from school.", level: "A1" },
+      { word: "happy", tr: "mutlu", sentence: "They look very happy after the good news.", level: "A1" },
+      { word: "time", tr: "zaman", sentence: "We do not have much time left today.", level: "A1" },
+      { word: "work", tr: "çalışmak, iş", sentence: "I start work at nine o'clock every day.", level: "A1" },
+      { word: "learn", tr: "öğrenmek", sentence: "Children learn new languages very quickly.", level: "A1" },
+      { word: "small", tr: "küçük", sentence: "They live in a small village near the sea.", level: "A1" },
+      { word: "morning", tr: "sabah", sentence: "The birds sing loudly in the early morning.", level: "A1" },
+      { word: "school", tr: "okul", sentence: "The children walk to school together.", level: "A1" },
+      { word: "family", tr: "aile", sentence: "My family gathers for dinner every Sunday.", level: "A1" },
+      { word: "smile", tr: "gülümsemek", sentence: "A warm smile can brighten someone's day.", level: "A1" },
+      { word: "music", tr: "müzik", sentence: "She listens to calm music while studying.", level: "A1" },
+      { word: "city", tr: "şehir", sentence: "Istanbul is a vibrant and historic city.", level: "A1" },
+      { word: "night", tr: "gece", sentence: "The stars shine brightly in the clear night.", level: "A1" },
+      { word: "write", tr: "yazmak", sentence: "Please write your name at the top of the page.", level: "A1" },
+
+      // A2
+      { word: "journey", tr: "yolculuk", sentence: "Our train journey across the mountains was unforgettable.", level: "A2" },
+      { word: "weather", tr: "hava durumu", sentence: "The weather is expected to stay warm all week.", level: "A2" },
+      { word: "decide", tr: "karar vermek", sentence: "We need to decide where to go for holiday.", level: "A2" },
+      { word: "remember", tr: "hatırlamak", sentence: "Do you remember the name of that restaurant?", level: "A2" },
+      { word: "borrow", tr: "ödünç almak", sentence: "Can I borrow your umbrella until tomorrow?", level: "A2" },
+      { word: "explain", tr: "açıklamak", sentence: "Could you explain this rule one more time?", level: "A2" },
+      { word: "arrive", tr: "varmak, ulaşmak", sentence: "The flight will arrive in London at noon.", level: "A2" },
+      { word: "improve", tr: "geliştirmek", sentence: "Reading daily will quickly improve your vocabulary.", level: "A2" },
+      { word: "prepare", tr: "hazırlamak", sentence: "Let us prepare dinner before the guests come.", level: "A2" },
+      { word: "dangerous", tr: "tehlikeli", sentence: "Driving fast on icy roads is very dangerous.", level: "A2" },
+      { word: "exciting", tr: "heyecan verici", sentence: "Starting a new job is an exciting experience.", level: "A2" },
+      { word: "mistake", tr: "hata", sentence: "Everyone makes a mistake when learning something new.", level: "A2" },
+      { word: "promise", tr: "söz vermek", sentence: "I promise to call you as soon as I get home.", level: "A2" },
+      { word: "protect", tr: "korumak", sentence: "Sunglasses protect your eyes from bright sunlight.", level: "A2" },
+      { word: "share", tr: "paylaşmak", sentence: "Good friends always share their thoughts honestly.", level: "A2" },
+      { word: "travel", tr: "seyahat etmek", sentence: "She loves to travel to different countries alone.", level: "A2" },
+      { word: "useful", tr: "faydalı, kullanışlı", sentence: "This dictionary app is extremely useful for students.", level: "A2" },
+      { word: "patient", tr: "sabırlı", sentence: "A good teacher must be calm and patient.", level: "A2" },
+
+      // B1
+      { word: "achieve", tr: "başarmak, elde etmek", sentence: "With steady effort, you can achieve your goals.", level: "B1" },
+      { word: "advantage", tr: "avantaj, üstünlük", sentence: "Speaking two languages gives you a clear advantage.", level: "B1" },
+      { word: "approach", tr: "yaklaşım, yaklaşmak", sentence: "We should try a different approach to solve this.", level: "B1" },
+      { word: "benefit", tr: "fayda, yarar", sentence: "Daily exercise has many benefits for mental health.", level: "B1" },
+      { word: "challenge", tr: "zorluk, meydan okuma", sentence: "Learning a new skill is always a rewarding challenge.", level: "B1" },
+      { word: "confident", tr: "özgüvenli", sentence: "She felt confident before giving her presentation.", level: "B1" },
+      { word: "curious", tr: "meraklı", sentence: "He is naturally curious about how machines work.", level: "B1" },
+      { word: "develop", tr: "geliştirmek", sentence: "The team worked hard to develop a better app.", level: "B1" },
+      { word: "encourage", tr: "cesaretlendirmek", sentence: "Parents should encourage their children to read.", level: "B1" },
+      { word: "environment", tr: "çevre", sentence: "Recycling helps protect our natural environment.", level: "B1" },
+      { word: "focus", tr: "odaklanmak", sentence: "Turn off notifications so you can focus deeply.", level: "B1" },
+      { word: "grateful", tr: "minnettar", sentence: "I am truly grateful for all your support.", level: "B1" },
+      { word: "habit", tr: "alışkanlık", sentence: "Drinking water after waking up is a healthy habit.", level: "B1" },
+      { word: "independent", tr: "bağımsız", sentence: "Living alone taught him to be more independent.", level: "B1" },
+      { word: "manage", tr: "yönetmek, başarmak", sentence: "She knows how to manage her time effectively.", level: "B1" },
+      { word: "opportunity", tr: "fırsat", sentence: "This internship is a great opportunity to learn.", level: "B1" },
+      { word: "predict", tr: "tahmin etmek", sentence: "It is hard to predict the weather next month.", level: "B1" },
+      { word: "reduce", tr: "azaltmak", sentence: "We should reduce plastic waste in our daily lives.", level: "B1" },
+      { word: "require", tr: "gerektirmek", sentence: "This position will require strong communication skills.", level: "B1" },
+      { word: "solution", tr: "çözüm", sentence: "They found a simple solution to the technical issue.", level: "B1" },
+
+      // B2
+      { word: "accurate", tr: "doğru, kesin", sentence: "The weather forecast was remarkably accurate today.", level: "B2" },
+      { word: "adapt", tr: "uyum sağlamak", sentence: "Humans can adapt quickly to changing environments.", level: "B2" },
+      { word: "adequate", tr: "yeterli", sentence: "Make sure you get adequate sleep before the exam.", level: "B2" },
+      { word: "ambitious", tr: "hırslı, iddialı", sentence: "She has an ambitious plan to launch her own company.", level: "B2" },
+      { word: "analyze", tr: "analiz etmek", sentence: "Scientists analyze data to find hidden patterns.", level: "B2" },
+      { word: "apparent", tr: "açık, belirgin", sentence: "It soon became apparent that the plan needed changes.", level: "B2" },
+      { word: "assume", tr: "varsaymak", sentence: "Do not assume the answer without checking the facts.", level: "B2" },
+      { word: "aware", tr: "farkında", sentence: "People are becoming more aware of digital privacy.", level: "B2" },
+      { word: "capable", tr: "yetenekli, muktedir", sentence: "She is fully capable of leading the entire project.", level: "B2" },
+      { word: "commit", tr: "adamak, taahhüt etmek", sentence: "You must commit at least twenty minutes a day.", level: "B2" },
+      { word: "complex", tr: "karmaşık", sentence: "The human brain is an extraordinarily complex organ.", level: "B2" },
+      { word: "consequence", tr: "sonuç", sentence: "Every decision carries a long-term consequence.", level: "B2" },
+      { word: "consistent", tr: "tutarlı", sentence: "Consistent practice matters more than occasional cramming.", level: "B2" },
+      { word: "contribute", tr: "katkıda bulunmak", sentence: "Each member can contribute fresh ideas to the meeting.", level: "B2" },
+      { word: "crucial", tr: "çok önemli, kritik", sentence: "Clear communication is crucial for teamwork.", level: "B2" },
+      { word: "decline", tr: "azalmak, reddetmek", sentence: "He politely had to decline the dinner invitation.", level: "B2" },
+      { word: "demonstrate", tr: "göstermek, kanıtlamak", sentence: "The experiment will demonstrate how the battery works.", level: "B2" },
+      { word: "determine", tr: "belirlemek", sentence: "Your daily habits largely determine your future.", level: "B2" },
+      { word: "distinct", tr: "belirgin, farklı", sentence: "Each region has its own distinct culinary style.", level: "B2" },
+      { word: "efficient", tr: "verimli", sentence: "Electric trains are a fast and efficient way to travel.", level: "B2" },
+      { word: "emerge", tr: "ortaya çıkmak", sentence: "New technologies continue to emerge every year.", level: "B2" },
+      { word: "emphasis", tr: "vurgu", sentence: "The course places strong emphasis on speaking practice.", level: "B2" },
+      { word: "enhance", tr: "geliştirmek, artırmak", sentence: "Good lighting can enhance the mood of a room.", level: "B2" },
+      { word: "essential", tr: "temel, vazgeçilmez", sentence: "Clean water is essential for all forms of life.", level: "B2" },
+      { word: "evaluate", tr: "değerlendirmek", sentence: "Teachers evaluate essays based on clarity and logic.", level: "B2" },
+      { word: "evident", tr: "apaçık, aşikar", sentence: "Her excitement was evident from her bright smile.", level: "B2" },
+      { word: "flexible", tr: "esnek", sentence: "Many companies now offer flexible working hours.", level: "B2" },
+      { word: "generate", tr: "üretmek, oluşturmak", sentence: "Wind turbines generate clean electricity for homes.", level: "B2" },
+      { word: "impact", tr: "etki", sentence: "Small kindnesses can have a huge impact on others.", level: "B2" },
+      { word: "implement", tr: "uygulamak", sentence: "The school will implement the new schedule next week.", level: "B2" },
+      { word: "inevitable", tr: "kaçınılmaz", sentence: "Change is an inevitable part of growing up.", level: "B2" },
+      { word: "insight", tr: "içgörü, kavrayış", sentence: "The book offers deep insight into human behavior.", level: "B2" },
+      { word: "maintain", tr: "sürdürmek, korumak", sentence: "It takes effort to maintain long-distance friendships.", level: "B2" },
+      { word: "obstacle", tr: "engel", sentence: "Lack of funding was the main obstacle to the project.", level: "B2" },
+      { word: "outcome", tr: "sonuç, çıktı", sentence: "We are hopeful about the final outcome of the talks.", level: "B2" },
+      { word: "persuade", tr: "ikna etmek", sentence: "It took hours to persuade him to join the trip.", level: "B2" },
+      { word: "potential", tr: "potansiyel", sentence: "Every student has the potential to excel with guidance.", level: "B2" },
+      { word: "reliable", tr: "güvenilir", sentence: "She is the most reliable person in our office.", level: "B2" },
+      { word: "significant", tr: "önemli, kayda değer", sentence: "There has been a significant drop in energy use.", level: "B2" },
+      { word: "sufficient", tr: "yeterli", sentence: "Do we have sufficient evidence to support this claim?", level: "B2" },
+      { word: "allocate", tr: "tahsis etmek, ayırmak", sentence: "We should allocate more time to listening practice.", level: "B2" },
+      { word: "collaborate", tr: "iş birliği yapmak", sentence: "Designers and engineers collaborate closely on new products.", level: "B2" },
+      { word: "compensate", tr: "telafi etmek", sentence: "Extra rest helped compensate for the exhausting week.", level: "B2" },
+      { word: "controversial", tr: "tartışmalı", sentence: "The new city regulation sparked a controversial debate.", level: "B2" },
+      { word: "dedicate", tr: "adamak", sentence: "She decided to dedicate her weekends to volunteering.", level: "B2" },
+      { word: "eliminate", tr: "elemek, ortadan kaldırmak", sentence: "Good habits help eliminate unnecessary daily stress.", level: "B2" },
+      { word: "facilitate", tr: "kolaylaştırmak", sentence: "Visual diagrams can facilitate faster understanding.", level: "B2" },
+      { word: "hypothesis", tr: "hipotez, varsayım", sentence: "The researchers tested their hypothesis in the lab.", level: "B2" },
+      { word: "initiative", tr: "girişim, inisiyatif", sentence: "Taking initiative early shows strong leadership.", level: "B2" },
+      { word: "justify", tr: "haklı çıkarmak, gerekçelendirmek", sentence: "Can you justify the extra cost in the budget?", level: "B2" },
+      { word: "legitimate", tr: "meşru, geçerli", sentence: "He raised a legitimate concern about data security.", level: "B2" },
+      { word: "neglect", tr: "ihmal etmek", sentence: "Do not neglect your sleep while preparing for finals.", level: "B2" },
+      { word: "perceive", tr: "algılamak", sentence: "People often perceive the same event differently.", level: "B2" },
+      { word: "priority", tr: "öncelik", sentence: "Health should always remain your top priority.", level: "B2" },
+      { word: "reinforce", tr: "pekiştirmek, güçlendirmek", sentence: "Flashcards reinforce new vocabulary in memory.", level: "B2" },
+      { word: "reluctant", tr: "isteksiz, gönülsüz", sentence: "He was initially reluctant to speak in front of crowds.", level: "B2" },
+      { word: "sustain", tr: "sürdürmek, devam ettirmek", sentence: "Renewable energy helps sustain economic growth.", level: "B2" },
+      { word: "trigger", tr: "tetiklemek", sentence: "A familiar scent can trigger vivid childhood memories.", level: "B2" },
+      { word: "vulnerable", tr: "savunmasız, kırılgan", sentence: "Coastal towns are vulnerable to rising sea levels.", level: "B2" },
+
+      // C1
+      { word: "ambiguous", tr: "belirsiz, muğlak", sentence: "The contract contained several ambiguous clauses.", level: "C1" },
+      { word: "arbitrary", tr: "keyfi, rastgele", sentence: "The selection process seemed completely arbitrary.", level: "C1" },
+      { word: "articulate", tr: "akıcı ve net ifade etmek", sentence: "She is able to articulate complex ideas effortlessly.", level: "C1" },
+      { word: "coherent", tr: "tutarlı, mantıklı", sentence: "He presented a clear and coherent argument.", level: "C1" },
+      { word: "compelling", tr: "ikna edici, sürükleyici", sentence: "The documentary makes a compelling case for reform.", level: "C1" },
+      { word: "comprehensive", tr: "kapsamlı", sentence: "We need a comprehensive review of the whole system.", level: "C1" },
+      { word: "convey", tr: "iletmek, aktarmak", sentence: "Words alone cannot convey how thankful I feel.", level: "C1" },
+      { word: "credibility", tr: "güvenilirlik, inandırıcılık", sentence: "Honest reporting builds long-term credibility.", level: "C1" },
+      { word: "culminate", tr: "doruğa ulaşmak, sonuçlanmak", sentence: "Months of rehearsal will culminate in tonight's concert.", level: "C1" },
+      { word: "deteriorate", tr: "kötüleşmek, bozulmak", sentence: "Air quality tends to deteriorate during heavy traffic.", level: "C1" },
+      { word: "diligent", tr: "çalışkan, özenli", sentence: "Her diligent research uncovered rare historical letters.", level: "C1" },
+      { word: "discrepancy", tr: "tutarsızlık, uyuşmazlık", sentence: "Auditors noticed a discrepancy in the financial report.", level: "C1" },
+      { word: "elaborate", tr: "ayrıntılı, detaylandırmak", sentence: "Could you elaborate on your proposal during the call?", level: "C1" },
+      { word: "eloquent", tr: "etkileyici konuşan, belagatli", sentence: "The speaker delivered an eloquent tribute to her mentor.", level: "C1" },
+      { word: "empirical", tr: "deneysel, gözleme dayalı", sentence: "Their theory is backed by strong empirical evidence.", level: "C1" },
+      { word: "endeavor", tr: "çaba, girişim", sentence: "Building a sustainable city is a collective endeavor.", level: "C1" },
+      { word: "ephemeral", tr: "kısa ömürlü, geçici", sentence: "Fame on social media can be surprisingly ephemeral.", level: "C1" },
+      { word: "exacerbate", tr: "kötüleştirmek, şiddetlendirmek", sentence: "Skipping sleep will only exacerbate your stress.", level: "C1" },
+      { word: "feasible", tr: "uygulanabilir, mümkün", sentence: "Solar heating is now a financially feasible option.", level: "C1" },
+      { word: "fluctuate", tr: "dalgalanmak", sentence: "Oil prices tend to fluctuate with global demand.", level: "C1" },
+      { word: "formidable", tr: "zorlu, heybetli", sentence: "Climbing the winter peak was a formidable task.", level: "C1" },
+      { word: "foster", tr: "teşvik etmek, beslemek", sentence: "Open dialogue helps foster trust among teammates.", level: "C1" },
+      { word: "implication", tr: "çıkarım, olası etki", sentence: "Think carefully about the ethical implications of AI.", level: "C1" },
+      { word: "incentive", tr: "teşvik, güdü", sentence: "Tax breaks provide an incentive for green energy.", level: "C1" },
+      { word: "inherent", tr: "doğasında olan, içkin", sentence: "Risk is an inherent part of any bold innovation.", level: "C1" },
+      { word: "intricate", tr: "girift, çok detaylı", sentence: "The watchmaker repaired the intricate mechanism.", level: "C1" },
+      { word: "lucid", tr: "berrak, anlaşılır", sentence: "Her lucid explanation made quantum physics approachable.", level: "C1" },
+      { word: "meticulous", tr: "titiz, kılı kırk yaran", sentence: "He kept meticulous notes throughout the experiment.", level: "C1" },
+      { word: "mitigate", tr: "hafifletmek, azaltmak", sentence: "Planting trees helps mitigate urban heat waves.", level: "C1" },
+      { word: "nuance", tr: "ince ayrım, nüans", sentence: "A good translator captures every subtle nuance.", level: "C1" },
+      { word: "paradigm", tr: "paradigma, örnek model", sentence: "Remote work created a new paradigm for office culture.", level: "C1" },
+      { word: "pragmatic", tr: "pragmatik, gerçekçi", sentence: "We need a pragmatic approach rather than pure theory.", level: "C1" },
+      { word: "prevalent", tr: "yaygın, hakim", sentence: "Contactless payments have become prevalent everywhere.", level: "C1" },
+      { word: "profound", tr: "derin, köklü", sentence: "Reading classic literature had a profound effect on him.", level: "C1" },
+      { word: "resilient", tr: "dayanıklı, çabuk toparlanan", sentence: "Local communities proved remarkably resilient after the storm.", level: "C1" },
+      { word: "scrutinize", tr: "titizlikle incelemek", sentence: "Reviewers will scrutinize every detail of the study.", level: "C1" },
+      { word: "subtle", tr: "ince, zor fark edilen", sentence: "There was a subtle shift in her tone of voice.", level: "C1" },
+      { word: "tangible", tr: "somut, elle tutulur", sentence: "The new policy produced tangible improvements in safety.", level: "C1" },
+      { word: "ubiquitous", tr: "her yerde bulunan, yaygın", sentence: "Smartphones have become ubiquitous in modern life.", level: "C1" },
+      { word: "viable", tr: "yaşayabilir, uygulanabilir", sentence: "We must find a viable alternative to fossil fuels.", level: "C1" },
+      { word: "alleviate", tr: "hafifletmek, dindirmek", sentence: "Short walks can alleviate tension during busy workdays.", level: "C1" },
+      { word: "bolster", tr: "desteklemek, güçlendirmek", sentence: "Positive feedback helped bolster the team's morale.", level: "C1" },
+      { word: "candid", tr: "samimi, açık sözlü", sentence: "I appreciate your candid opinion on this design.", level: "C1" },
+      { word: "consolidate", tr: "birleştirmek, sağlamlaştırmak", sentence: "Reviewing notes nightly helps consolidate new knowledge.", level: "C1" },
+      { word: "contemplate", tr: "derinlemesine düşünmek", sentence: "She sat by the lake to contemplate her next move.", level: "C1" },
+      { word: "disseminate", tr: "yaymak, dağıtmak", sentence: "Universities disseminate research findings globally.", level: "C1" },
+      { word: "eminent", tr: "seçkin, ünlü", sentence: "An eminent historian gave the opening lecture.", level: "C1" },
+      { word: "indispensable", tr: "vazgeçilmez", sentence: "Good sleep is indispensable for sharp memory.", level: "C1" },
+      { word: "leverage", tr: "avantaj olarak kullanmak", sentence: "We can leverage existing data to speed up testing.", level: "C1" },
+      { word: "plausible", tr: "akla yatkın, makul", sentence: "She offered a plausible explanation for the delay.", level: "C1" },
+      { word: "reconcile", tr: "uzlaştırmak, bağdaştırmak", sentence: "It is hard to reconcile work speed with zero errors.", level: "C1" },
+      { word: "stagnant", tr: "durgun, hareketsiz", sentence: "Wages remained stagnant despite rising living costs.", level: "C1" },
+      { word: "substantiate", tr: "kanıtlamak, desteklemek", sentence: "Please substantiate your claims with reliable sources.", level: "C1" },
+      { word: "unprecedented", tr: "benzeri görülmemiş", sentence: "Remote learning grew at an unprecedented pace.", level: "C1" },
+
+      // C2
+      { word: "alacrity", tr: "heves, isteklilik", sentence: "She accepted the challenging assignment with alacrity.", level: "C2" },
+      { word: "anachronism", tr: "çağ dışı kalmış şey", sentence: "Using a floppy disk today feels like an anachronism.", level: "C2" },
+      { word: "cacophony", tr: "kakofoni, kulak tırmalayan ses", sentence: "A cacophony of car horns echoed through the avenue.", level: "C2" },
+      { word: "cogent", tr: "ikna edici, sağlam", sentence: "She offered a cogent summary of the legal dispute.", level: "C2" },
+      { word: "conundrum", tr: "çözülmesi zor bilmece, ikilem", sentence: "Balancing speed and accuracy remains a classic conundrum.", level: "C2" },
+      { word: "corroborate", tr: "doğrulamak, teyit etmek", sentence: "Independent witnesses helped corroborate his timeline.", level: "C2" },
+      { word: "dichotomy", tr: "ikilik, keskin zıtlık", sentence: "There is often a false dichotomy between art and science.", level: "C2" },
+      { word: "disparate", tr: "bambaşka, uyumsuz", sentence: "The festival brings together disparate musical traditions.", level: "C2" },
+      { word: "ebullient", tr: "coşkulu, hayat dolu", sentence: "Her ebullient personality energized the entire room.", level: "C2" },
+      { word: "equivocal", tr: "iki anlamlı, kaçamak", sentence: "The spokesperson gave an equivocal answer to the press.", level: "C2" },
+      { word: "esoteric", tr: "ezoterik, az kişinin anladığı", sentence: "The lecture focused on esoteric mathematical proofs.", level: "C2" },
+      { word: "fastidious", tr: "aşırı titiz, müşkülpesent", sentence: "He is fastidious about keeping his workspace spotless.", level: "C2" },
+      { word: "gregarious", tr: "sosyal, arkadaş canlısı", sentence: "Being gregarious, he made friends in every city.", level: "C2" },
+      { word: "iconoclast", tr: "tabuları yıkan kimse", sentence: "The young director was known as an artistic iconoclast.", level: "C2" },
+      { word: "immutable", tr: "değişmez, sabit", sentence: "The laws of physics are considered immutable.", level: "C2" },
+      { word: "impecunious", tr: "parasız, yoksul", sentence: "Many impecunious students rely on public libraries.", level: "C2" },
+      { word: "ineffable", tr: "kelimelerle anlatılamaz", sentence: "Standing atop the glacier brought an ineffable sense of awe.", level: "C2" },
+      { word: "inexorable", tr: "önlenemez, amansız", sentence: "The inexorable march of technology reshapes every field.", level: "C2" },
+      { word: "insidious", tr: "sinsi, gizlice zarar veren", sentence: "Burnout can be an insidious threat to creative teams.", level: "C2" },
+      { word: "juxtapose", tr: "yan yana koyup karşılaştırmak", sentence: "The exhibit will juxtapose ancient pottery with modern glass.", level: "C2" },
+      { word: "laconic", tr: "özlü, az sözle çok şey anlatan", sentence: "His laconic reply said everything in just three words.", level: "C2" },
+      { word: "magnanimous", tr: "yüce gönüllü, bağışlayıcı", sentence: "The champion was magnanimous in praising his rival.", level: "C2" },
+      { word: "mellifluous", tr: "tatlı ve akıcı sesli", sentence: "Her mellifluous voice calmed the restless audience.", level: "C2" },
+      { word: "nebulous", tr: "belirsiz, sisli", sentence: "Their plans for next summer are still rather nebulous.", level: "C2" },
+      { word: "obfuscate", tr: "bulanıklaştırmak, kafa karıştırmak", sentence: "Technical jargon can obfuscate a simple message.", level: "C2" },
+      { word: "ostensible", tr: "görünürdeki, sözde", sentence: "His ostensible reason for visiting was to borrow a book.", level: "C2" },
+      { word: "panacea", tr: "her derde deva, mucize çözüm", sentence: "No single policy is a panacea for economic challenges.", level: "C2" },
+      { word: "parsimonious", tr: "aşırı tutumlu, cimri", sentence: "A parsimonious budget left little room for innovation.", level: "C2" },
+      { word: "pellucid", tr: "duru, kristal gibi berrak", sentence: "The mountain stream was pellucid even after the rain.", level: "C2" },
+      { word: "pernicious", tr: "çok zararlı, yıkıcı", sentence: "False rumors can have a pernicious effect on morale.", level: "C2" },
+      { word: "perspicacious", tr: "keskin zekalı, basiretli", sentence: "A perspicacious editor spotted the flaw immediately.", level: "C2" },
+      { word: "plethora", tr: "aşırı bolluk, çokluk", sentence: "The internet offers a plethora of free learning tools.", level: "C2" },
+      { word: "proclivity", tr: "doğal eğilim, yatkınlık", sentence: "She has a strong proclivity for solving logic puzzles.", level: "C2" },
+      { word: "quintessential", tr: "en tipik, özünü yansıtan", sentence: "Turkish tea in a tulip glass is the quintessential welcome.", level: "C2" },
+      { word: "recalcitrant", tr: "dik başlı, inatçı", sentence: "Even the recalcitrant critic praised the final performance.", level: "C2" },
+      { word: "sagacious", tr: "bilge, öngörülü", sentence: "Her sagacious advice saved the team from a costly error.", level: "C2" },
+      { word: "serendipity", tr: "mutlu tesadüf", sentence: "Finding that rare book in a tiny alley was pure serendipity.", level: "C2" },
+      { word: "superfluous", tr: "gereksiz, fazlalık", sentence: "Remove superfluous adjectives to sharpen your writing.", level: "C2" },
+      { word: "sycophant", tr: "dalkavuk, yaltakçı", sentence: "Wise leaders prefer honest critics over sycophants.", level: "C2" },
+      { word: "transient", tr: "geçici, kısa süreli", sentence: "Summer storms are intense yet transient.", level: "C2" },
+      { word: "acumen", tr: "keskin zeka, iş veya durum kavrayışı", sentence: "Her strategic acumen turned the struggling studio around.", level: "C2" },
+      { word: "antithesis", tr: "tam zıttı, karşıtı", sentence: "His calm demeanor was the antithesis of panic.", level: "C2" },
+      { word: "capricious", tr: "kaprisli, değişken", sentence: "Spring weather in the mountains can be quite capricious.", level: "C2" },
+      { word: "circumspect", tr: "ihtiyatlı, tedbirli", sentence: "She was circumspect when signing unfamiliar agreements.", level: "C2" },
+      { word: "deleterious", tr: "zararlı, tahrip edici", sentence: "Chronic noise has a deleterious impact on concentration.", level: "C2" },
+      { word: "enervate", tr: "gücünü tüketmek, zayıflatmak", sentence: "The humid afternoon heat seemed to enervate everyone.", level: "C2" },
+      { word: "extrapolate", tr: "eldeki veriden çıkarım yapmak", sentence: "Analysts extrapolate future trends from past habits.", level: "C2" },
+      { word: "harbinger", tr: "haberci, müjdeci", sentence: "Swallows returning north are a harbinger of spring.", level: "C2" },
+      { word: "idiosyncrasy", tr: "kişiye özgü tuhaf özellik", sentence: "Writing only with green ink was his harmless idiosyncrasy.", level: "C2" },
+      { word: "ostracize", tr: "dışlamak, toplumdan soyutlamak", sentence: "Fair teams never ostracize someone for making a mistake.", level: "C2" },
+      { word: "penchant", tr: "özel eğilim, düşkünlük", sentence: "He has a penchant for collecting vintage fountain pens.", level: "C2" },
+      { word: "quixotic", tr: "aşırı idealist, hayalperest", sentence: "Launching a paper magazine today seemed quixotic yet brave.", level: "C2" },
+      { word: "ubiquity", tr: "her yerde bulunma hali", sentence: "The ubiquity of cameras has transformed street photography.", level: "C2" },
+      { word: "verisimilitude", tr: "gerçeğe benzerlik", sentence: "Careful dialogue gave the novel remarkable verisimilitude.", level: "C2" }
+    ];
+
+    /* CONFETTI */
+    function fireConfetti() {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const colors = ["#6366F1", "#EC4899", "#F59E0B", "#10B981", "#3B82F6", "#06B6D4"];
+      const particles = [];
+      for (let i = 0; i < 95; i++) {
+        particles.push({
+          x: canvas.width * (0.2 + Math.random() * 0.6),
+          y: canvas.height * 0.55,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -Math.random() * 14 - 5,
+          size: Math.random() * 8 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+          alpha: 1
+        });
+      }
+      let frame = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach((p) => {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.42; p.vx *= 0.99; p.rotation += p.vRot;
+          if (frame > 35) p.alpha -= 0.02;
+          if (p.alpha > 0 && p.y < canvas.height + 40) {
+            alive = true;
+            ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.translate(p.x, p.y); ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+          }
+        });
+        frame++;
+        if (alive && frame < 110) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    /* SOUND & HAPTIC FEEDBACK (USER-TOGGLEABLE) */
+    const STATS_KEY = "wordy_stats_v1";
+    const STORAGE_KEY = "wordy_pool_v2";
+    const THEME_KEY = "wordy_theme_v1";
+    const LEVELS_KEY = "wordy_selected_levels_v1";
+    const LEVEL_ORDER = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+
+    let dailyStats = { lastDate: "", todayCount: 0, streak: 0 };
+
+    let wordPool = [];
+    let currentFilterLevel = "ALL";
+    let currentSortMode = "level-asc";
+    let reviewScreenState = "setup";
+    let selectedReviewLevels = ["B2", "C1", "C2"];
+    let reviewStepCounter = 0;
+    let scheduledRepeats = [];
+    let lastShownWord = null;
+    let currentReviewWord = null;
+    let activityMode = null;
+    let matchSelectedLeft = null;
+    let matchSelectedRight = null;
+    let matchedCount = 0;
+
+    function getTodayDateStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function getYesterdayDateStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function loadState() {
+      try { wordPool = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { wordPool = []; }
+      try {
+        const parsed = JSON.parse(localStorage.getItem(LEVELS_KEY));
+        if (Array.isArray(parsed) && parsed.length > 0) selectedReviewLevels = parsed;
+      } catch {}
+try {
+        const s = JSON.parse(localStorage.getItem(STATS_KEY));
+        if (s) dailyStats = s;
+      } catch {}
+
+      const today = getTodayDateStr();
+      const yesterday = getYesterdayDateStr();
+      if (dailyStats.lastDate && dailyStats.lastDate !== today && dailyStats.lastDate !== yesterday) {
+        dailyStats.streak = 0;
+        dailyStats.todayCount = 0;
+      } else if (dailyStats.lastDate && dailyStats.lastDate !== today) {
+        dailyStats.todayCount = 0;
+      }
+
+      if (localStorage.getItem(THEME_KEY) === "dark") {
+        document.body.classList.add("dark-theme");
+        updateThemeIcons(true);
+      }
+
+      updateDailyStatsUI();
+      updateDashboardSubtitles();
+    }
+
+    function recordPracticeProgress() {
+      const today = getTodayDateStr();
+      const yesterday = getYesterdayDateStr();
+      if (dailyStats.lastDate !== today) {
+        dailyStats.streak = dailyStats.lastDate === yesterday ? (dailyStats.streak || 0) + 1 : 1;
+        dailyStats.todayCount = 0;
+        dailyStats.lastDate = today;
+      }
+      dailyStats.todayCount = (dailyStats.todayCount || 0) + 1;
+      localStorage.setItem(STATS_KEY, JSON.stringify(dailyStats));
+      updateDailyStatsUI(true);
+    }
+
+    function updateDailyStatsUI(animate = false) {
+      const streak = dailyStats.streak || 0;
+      const streakEl = document.getElementById("stat-streak-count");
+      const flameEl = document.getElementById("streak-flame-icon");
+      streakEl.textContent = streak;
+
+      if (streak === 0) {
+        flameEl.style.color = "#94A3B8";
+        streakEl.style.color = "var(--ios-subtext)";
+      } else {
+        const clamped = Math.min(streak, 10);
+        const hue = Math.round(48 - ((clamped - 1) / 9) * 48); // 48 (yellow) -> 0 (red)
+        const color = clamped >= 10 ? "#EF4444" : `hsl(${hue}, 92%, 52%)`;
+        flameEl.style.color = color;
+        streakEl.style.color = color;
+      }
+
+      if (animate) {
+        const bar = document.getElementById("daily-stats-bar");
+        bar.style.transform = "scale(1.08)";
+        flameEl.style.transform = "scale(1.2) rotate(-6deg)";
+        setTimeout(() => {
+          bar.style.transform = "scale(1)";
+          flameEl.style.transform = "scale(1) rotate(0deg)";
+        }, 260);
+      }
+    }
+    function savePool() { localStorage.setItem(STORAGE_KEY, JSON.stringify(wordPool)); updateDashboardSubtitles(); }
+    function updateDashboardSubtitles() {
+      const needReviewCount = wordPool.filter((w) => w.score < 5).length;
+      document.getElementById("pool-card-subtitle").textContent = `${wordPool.length} kelime havuzda (${needReviewCount} tekrar bekliyor)`;
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("dark-theme");
+      localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+      updateThemeIcons(isDark); }
+
+    function updateThemeIcons(isDark) {
+      document.getElementById("theme-icon-moon").style.display = isDark ? "none" : "block";
+      document.getElementById("theme-icon-sun").style.display = isDark ? "block" : "none";
+      const metaTheme = document.getElementById("meta-theme-color");
+      if (metaTheme) metaTheme.setAttribute("content", isDark ? "#0B132B" : "#F2F5FC");
+    }
+
+    const LIVE_MOBILE_URL = "https://others-plays-dylan-kerry.trycloudflare.com";
+
+    function getShareableUrl() {
+      const href = window.location.href || "";
+      if (href.startsWith("https://") && !href.includes("localhost") && !href.includes("127.0.0.1")) {
+        return href;
+      }
+      return LIVE_MOBILE_URL;
+    }
+
+    function togglePhoneLinkDrawer() {
+      const drawer = document.getElementById("phone-link-drawer");
+      const input = document.getElementById("phone-share-url");
+      const feedback = document.getElementById("copy-feedback");
+      if (drawer.classList.toggle("open")) {
+        input.value = getShareableUrl();
+        feedback.classList.remove("visible");
+      } }
+
+    function copyPhoneLink(e) {
+      if (e) e.stopPropagation();
+      const input = document.getElementById("phone-share-url");
+      const feedback = document.getElementById("copy-feedback");
+      const urlText = input.value || getShareableUrl();
+      const showCopied = () => { feedback.classList.add("visible"); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(urlText).then(showCopied).catch(() => { input.select(); document.execCommand("copy"); showCopied(); });
+      } else { input.select(); document.execCommand("copy"); showCopied(); }
+    }
+
+    function speakWord(word, btnEl) { if (btnEl) { btnEl.classList.add("speaking"); setTimeout(() => btnEl.classList.remove("speaking"), 750); }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(word);
+        utter.lang = "en-US"; utter.rate = 0.92;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function openView(id) { document.getElementById(id).classList.add("active");
+      if (id === "view-review") { reviewScreenState = "setup"; renderReviewSetup(); }
+      else if (id === "view-pool") { renderPool(); }
+      else if (id === "view-activities") { activityMode = null; renderActivitiesMenu(); }
+    }
+    function closeView(id) { document.getElementById(id).classList.remove("active"); }
+    function handleReviewBack() { if (reviewScreenState === "quiz") { reviewScreenState = "setup"; renderReviewSetup(); } else closeView("view-review"); }
+    function handleActivitiesBack() { if (activityMode !== null) { activityMode = null; renderActivitiesMenu(); } else closeView("view-activities"); }
+
+    function renderReviewSetup() {
+      document.getElementById("review-header-title").textContent = "Tekrar Et";
+      const allLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
+      const isAllSelected = allLevels.every((lvl) => selectedReviewLevels.includes(lvl));
+      document.getElementById("review-content").innerHTML = `
+        <div style="display:flex; flex-direction:column; flex:1; justify-content:space-between; gap:18px;">
+          <div>
+            <p style="font-size:14px; color:var(--ios-subtext); font-weight:600; line-height:1.45;">Çalışmak istediğin seviyeleri seç. Birden fazla seviye işaretleyebilirsin.</p>
+            <div class="level-selector-list">
+              ${allLevels.map((lvl) => `
+                <div class="level-select-row ${selectedReviewLevels.includes(lvl) ? "selected" : ""}" onclick="toggleReviewLevel('${lvl}')">
+                  <span class="level-select-label">${lvl}</span>
+                  <div class="soft-tickbox"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+                </div>
+              `).join("")}
+              <div class="level-select-row ${isAllSelected ? "selected" : ""}" onclick="toggleMixedLevels()">
+                <span class="level-select-label">Karışık</span>
+                <div class="soft-tickbox"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="startReviewSession()">Çalışmaya Başla (${selectedReviewLevels.length} Seviye)</button>
+        </div>`;
+    }
+
+    function toggleReviewLevel(lvl) { if (selectedReviewLevels.includes(lvl)) { if (selectedReviewLevels.length > 1) selectedReviewLevels = selectedReviewLevels.filter((x) => x !== lvl); }
+      else selectedReviewLevels.push(lvl);
+      localStorage.setItem(LEVELS_KEY, JSON.stringify(selectedReviewLevels));
+      renderReviewSetup();
+    }
+    function toggleMixedLevels() { const allLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
+      selectedReviewLevels = allLevels.every((l) => selectedReviewLevels.includes(l)) ? ["B2", "C1", "C2"] : [...allLevels];
+      localStorage.setItem(LEVELS_KEY, JSON.stringify(selectedReviewLevels));
+      renderReviewSetup();
+    }
+    function startReviewSession() { reviewScreenState = "quiz"; reviewStepCounter = 0; scheduledRepeats = []; lastShownWord = null;
+      loadNextReviewQuestion();
+    }
+
+    function getNextReviewWord() {
+      reviewStepCounter++;
+      const dueIdx = scheduledRepeats.findIndex((item) => item.dueAtStep <= reviewStepCounter && item.wordObj.word !== lastShownWord);
+      if (dueIdx !== -1) {
+        const dueItem = scheduledRepeats.splice(dueIdx, 1)[0];
+        const poolEntry = wordPool.find((w) => w.word === dueItem.wordObj.word);
+        if (!poolEntry || poolEntry.score < 5) return poolEntry || dueItem.wordObj;
+      }
+      const candidates = [];
+      wordPool.forEach((pw) => { if (pw.score < 5 && selectedReviewLevels.includes(pw.level) && pw.word !== lastShownWord) candidates.push(pw); });
+      DICTIONARY.forEach((dw) => { if (selectedReviewLevels.includes(dw.level) && dw.word !== lastShownWord && !wordPool.find((pw) => pw.word === dw.word)) candidates.push({ ...dw, score: 0 }); });
+      if (candidates.length === 0) {
+        const fallback = DICTIONARY.filter((d) => selectedReviewLevels.includes(d.level));
+        return { ...fallback[Math.floor(Math.random() * fallback.length)], score: 0 };
+      }
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    function loadNextReviewQuestion() {
+      const wordObj = getNextReviewWord();
+      currentReviewWord = wordObj; lastShownWord = wordObj.word;
+      document.getElementById("review-header-title").textContent = `Tekrar Et · ${wordObj.level}`;
+      const distractors = DICTIONARY.filter((d) => d.word !== wordObj.word && d.tr !== wordObj.tr).sort(() => Math.random() - 0.5).slice(0, 3).map((d) => d.tr);
+      const options = [wordObj.tr, ...distractors].sort(() => Math.random() - 0.5);
+      const scoreDisplay = wordObj.score === 0 ? "Yeni (0/5)" : `Puan: ${wordObj.score}/5`;
+      document.getElementById("review-content").innerHTML = `
+        <div>
+          <div class="question-box">
+            <button class="speak-btn" onclick="speakWord('${escapeAttr(wordObj.word)}', this)" aria-label="Telaffuzu Dinle">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>
+            </button>
+            <div class="badge-row"><span class="level-badge">${wordObj.level}</span><span class="score-badge" id="review-score-badge">${scoreDisplay}</span></div>
+            <div class="word-title">${escapeHtml(wordObj.word)}</div>
+            <p class="word-sentence">"${escapeHtml(wordObj.sentence)}"</p>
+          </div>
+          <div class="options-grid" id="review-options">
+            ${options.map((opt, idx) => `<button class="option-btn opt-${idx}" onclick="handleReviewAnswer(this, '${escapeAttr(opt)}')"><span>${escapeHtml(opt)}</span></button>`).join("")}
+          </div>
+        </div>
+        <div id="review-next-wrap" style="margin-top: 18px; display: none;"><button class="btn-primary" onclick="loadNextReviewQuestion()">Sonraki Kelime</button></div>`;
+    }
+
+    function handleReviewAnswer(btnEl, chosenTr) {
+      const buttons = document.querySelectorAll("#review-options .option-btn");
+      buttons.forEach((b) => (b.disabled = true));
+      let poolEntry = wordPool.find((w) => w.word === currentReviewWord.word);
+      const badge = document.getElementById("review-score-badge");
+
+      if (chosenTr === currentReviewWord.tr) {
+        btnEl.classList.add("correct");
+        buttons.forEach((b) => { if (b !== btnEl) b.classList.add("dimmed"); }); fireConfetti();
+        recordPracticeProgress();
+
+        if (!poolEntry) {
+          poolEntry = { ...currentReviewWord, score: 1 };
+          wordPool.push(poolEntry);
+        } else {
+          poolEntry.score = Math.min(5, poolEntry.score + 1);
+        }
+        if (badge) {
+          badge.textContent = `Puan: ${poolEntry.score}/5`;
+          badge.classList.add("pop");
+        }
+        savePool();
+        setTimeout(() => { if (reviewScreenState === "quiz") loadNextReviewQuestion(); }, 920);
+      } else {
+        btnEl.classList.add("wrong");
+        buttons.forEach((b) => { if (b.textContent.trim() === currentReviewWord.tr) b.classList.add("correct"); else if (b !== btnEl) b.classList.add("dimmed"); }); if (!poolEntry) { poolEntry = { ...currentReviewWord, score: 1 }; wordPool.push(poolEntry); }
+        else poolEntry.score = Math.max(1, poolEntry.score - 1);
+        if (badge) badge.textContent = `Puan: ${poolEntry.score}/5`;
+        savePool();
+
+        scheduledRepeats = scheduledRepeats.filter((r) => r.wordObj.word !== poolEntry.word);
+        scheduledRepeats.push({ wordObj: poolEntry, dueAtStep: reviewStepCounter + 2 });
+        scheduledRepeats.push({ wordObj: poolEntry, dueAtStep: reviewStepCounter + 13 });
+        document.getElementById("review-next-wrap").style.display = "block";
+      }
+    }
+
+    async function handleAddWord() {
+      const input = document.getElementById("new-word-input");
+      const raw = input.value.trim().toLowerCase();
+      if (!raw || !/^[a-z-]+$/.test(raw)) { showAddStatus("Lütfen geçerli bir İngilizce kelime yaz.", "var(--danger)"); return; }
+      if (wordPool.some((w) => w.word === raw)) { showAddStatus("Bu kelime zaten havuzunda bulunuyor.", "var(--pastel-amber-text)"); return; }
+      const dictMatch = DICTIONARY.find((d) => d.word === raw);
+      if (dictMatch) {
+        wordPool.unshift({ ...dictMatch, score: 1 }); savePool(); input.value = ""; showAddStatus(`"${dictMatch.word}" havuzuna eklendi (1 Puan - Tekrar Gerekli).`, "var(--success)"); renderPool(); return;
+      }
+      showAddStatus("Sözlükte kontrol ediliyor...", "var(--ios-subtext)");
+      try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(raw)}`);
+        if (!res.ok) throw new Error("Not found");
+        const data = await res.json();
+        const def = data[0]?.meanings?.[0]?.definitions?.[0]?.definition || "İngilizce kelime";
+        const ex = data[0]?.meanings?.[0]?.definitions?.[0]?.example || `I am learning how to use "${raw}" in a sentence.`;
+        wordPool.unshift({ word: raw, tr: def.length > 55 ? def.slice(0, 52) + "..." : def, sentence: ex, level: "B2", score: 1 });
+        savePool(); input.value = ""; showAddStatus(`"${raw}" doğrulandı ve havuzuna eklendi.`, "var(--success)"); renderPool();
+      } catch { showAddStatus("Sözlükte bulunamadı veya yanlış yazdın.", "var(--danger)");
+      }
+    }
+
+    function showAddStatus(msg, color) { const el = document.getElementById("word-add-status"); el.textContent = msg; el.style.color = color; el.style.display = "block"; }
+    function filterByLevel(lvl, btn) { currentFilterLevel = lvl; document.querySelectorAll("#level-filter-bar .filter-pill").forEach((p) => p.classList.remove("active")); if (btn) btn.classList.add("active"); renderPool(); }
+    function handleSortChange(val) { currentSortMode = val; renderPool(); }
+    function removeWordFromPool(word) { wordPool = wordPool.filter((w) => w.word !== word); savePool(); renderPool(); }
+    function resetPool() { if (confirm("Kelime havuzundaki tüm kelimeler ve puanlar silinecek. Emin misin?")) { wordPool = []; savePool(); renderPool(); } }
+
+    function renderPool() {
+      const listEl = document.getElementById("pool-list");
+      let items = currentFilterLevel === "ALL" ? [...wordPool] : wordPool.filter((w) => w.level === currentFilterLevel);
+      items.sort((a, b) => {
+        if (currentSortMode === "level-asc") return (LEVEL_ORDER[a.level] || 3) - (LEVEL_ORDER[b.level] || 3);
+        if (currentSortMode === "level-desc") return (LEVEL_ORDER[b.level] || 3) - (LEVEL_ORDER[a.level] || 3);
+        if (currentSortMode === "score-asc") return a.score - b.score;
+        return b.score - a.score;
+      });
+      if (items.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; padding: 36px 20px; background: var(--ios-card); border-radius: 20px; border: 1px solid var(--ios-border);"><div style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">Henüz kelime yok</div><p style="font-size: 13.5px; color: var(--ios-subtext); line-height: 1.5;">Yukarıdan yeni İngilizce kelime ekleyebilir veya <strong>Tekrar Et</strong> bölümünden kelimeler öğrenebilirsin.</p></div>`;
+        return;
+      }
+      listEl.innerHTML = items.map((w) => `
+        <div class="pool-item">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><span style="font-size:17px; font-weight:800;">${escapeHtml(w.word)}</span><span class="level-badge">${w.level}</span><span class="score-badge">${w.score}/5</span></div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button onclick="speakWord('${escapeAttr(w.word)}', this)" aria-label="Dinle" style="width:34px; height:34px; border-radius:50%; border:none; background:var(--pastel-blue-bg); color:var(--pastel-blue-text); display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.54 8.46a5 5 0 010 7.07"/></svg></button>
+              <button onclick="removeWordFromPool('${escapeAttr(w.word)}')" aria-label="Sil" style="width:34px; height:34px; border-radius:50%; border:none; background:transparent; color:var(--ios-subtext); display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+          </div>
+          <div style="font-size:14.5px; font-weight:700; color:var(--ios-blue);">${escapeHtml(w.tr)}</div>
+          <div style="font-size:13px; color:var(--ios-subtext); line-height:1.45;">"${escapeHtml(w.sentence)}"</div>
+        </div>`).join("");
+    }
+
+    function renderActivitiesMenu() {
+      document.getElementById("activities-title").textContent = "Etkinlikler";
+      const container = document.getElementById("activities-content");
+      if (wordPool.length < 4) {
+        container.innerHTML = `<div style="margin:auto 0; text-align:center; background:var(--ios-card); border:1px solid var(--ios-border); border-radius:24px; padding:28px 22px; box-shadow:var(--ios-shadow);"><div style="font-size:18px; font-weight:800; margin-bottom:8px;">Etkinlikler İçin En Az 4 Kelime Gerekli</div><p style="font-size:14px; color:var(--ios-subtext); line-height:1.5; margin-bottom:20px;">Şu anda havuzunda <strong>${wordPool.length}</strong> kelime var. Etkinliklere başlamak için biraz daha kelime ekle veya tekrar yap.</p><div style="display:flex; flex-direction:column; gap:10px;"><button class="btn-primary" onclick="closeView('view-activities'); openView('view-review');">Tekrar Et'e Git</button><button class="btn-secondary" onclick="closeView('view-activities'); openView('view-pool');">Kelime Ekle</button></div></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="ios-card" onclick="startActivity('match')" style="display:flex; align-items:center; justify-content:space-between;"><div><div style="font-size:17px; font-weight:800;">Eşleştirme</div><div style="font-size:13px; color:var(--ios-subtext); margin-top:3px;">İngilizce kelimeleri Türkçe anlamlarıyla eşle</div></div><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color:var(--ios-subtext);opacity:0.6;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
+          <div class="ios-card" onclick="startActivity('fill')" style="display:flex; align-items:center; justify-content:space-between;"><div><div style="font-size:17px; font-weight:800;">Boşluk Doldurma</div><div style="font-size:13px; color:var(--ios-subtext); margin-top:3px;">Cümledeki eksik kelimeyi bularak tamamla</div></div><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color:var(--ios-subtext);opacity:0.6;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
+          <div class="ios-card" onclick="startActivity('mixed')" style="display:flex; align-items:center; justify-content:space-between;"><div><div style="font-size:17px; font-weight:800;">Karışık Mod</div><div style="font-size:13px; color:var(--ios-subtext); margin-top:3px;">Eşleştirme ve boşluk doldurma rastgele gelir</div></div><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color:var(--ios-subtext);opacity:0.6;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
+        </div>`;
+    }
+
+    function startActivity(mode) { activityMode = mode; runNextActivityStep(); }
+    function runNextActivityStep() {
+      const type = activityMode === "mixed" ? (Math.random() < 0.5 ? "match" : "fill") : activityMode;
+      if (type === "match") renderMatchingGame(); else renderFillBlankGame();
+    }
+    function pickWeightedPoolWords(count) {
+      const weighted = [];
+      wordPool.forEach((w) => { const weight = w.score < 5 ? 6 : 1; for (let i = 0; i < weight; i++) weighted.push(w); });
+      const picked = [], used = new Set(); let guard = 0;
+      while (picked.length < count && guard < 200) {
+        const cand = weighted[Math.floor(Math.random() * weighted.length)];
+        if (!used.has(cand.word)) { used.add(cand.word); picked.push(cand); }
+        guard++;
+      }
+      return picked;
+    }
+
+    function renderMatchingGame() {
+      document.getElementById("activities-title").textContent = "Eşleştirme";
+      const chosen = pickWeightedPoolWords(4);
+      const leftItems = [...chosen].sort(() => Math.random() - 0.5);
+      const rightItems = [...chosen].sort(() => Math.random() - 0.5);
+      matchSelectedLeft = null; matchSelectedRight = null; matchedCount = 0;
+      document.getElementById("activities-content").innerHTML = `
+        <div style="display:flex; flex-direction:column; flex:1; justify-content:space-between;">
+          <div>
+            <p style="font-size:13.5px; color:var(--ios-subtext); font-weight:600; text-align:center;">Sol taraftan bir İngilizce kelime, sağ taraftan Türkçe karşılığını seç.</p>
+            <div class="match-grid">
+              <div class="match-col"><div class="match-col-header">EN</div>${leftItems.map((i) => `<button class="match-card" data-side="left" data-word="${escapeAttr(i.word)}" onclick="selectMatchCard(this)">${escapeHtml(i.word)}</button>`).join("")}</div>
+              <div class="match-col"><div class="match-col-header">TR</div>${rightItems.map((i) => `<button class="match-card" data-side="right" data-word="${escapeAttr(i.word)}" onclick="selectMatchCard(this)">${escapeHtml(i.tr)}</button>`).join("")}</div>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:20px;" onclick="runNextActivityStep()">Yeni Tur</button>
+        </div>`;
+    }
+
+    function selectMatchCard(cardEl) {
+      if (cardEl.classList.contains("matched") || cardEl.classList.contains("wrong")) return; if (cardEl.dataset.side === "left") { if (matchSelectedLeft) matchSelectedLeft.classList.remove("selected"); matchSelectedLeft = cardEl; cardEl.classList.add("selected"); }
+      else { if (matchSelectedRight) matchSelectedRight.classList.remove("selected"); matchSelectedRight = cardEl; cardEl.classList.add("selected"); }
+      if (matchSelectedLeft && matchSelectedRight) {
+        const lCard = matchSelectedLeft, rCard = matchSelectedRight;
+        matchSelectedLeft = null; matchSelectedRight = null;
+        if (lCard.dataset.word === rCard.dataset.word) {
+          lCard.classList.remove("selected"); rCard.classList.remove("selected"); lCard.classList.add("matched"); rCard.classList.add("matched"); matchedCount++; const entry = wordPool.find((w) => w.word === lCard.dataset.word);
+          if (entry) { entry.score = Math.min(5, entry.score + 1); savePool(); }
+          if (matchedCount === 4) { fireConfetti();
+            recordPracticeProgress();
+            setTimeout(() => { if (activityMode !== null) runNextActivityStep(); }, 950);
+          }
+        } else {
+          lCard.classList.remove("selected"); rCard.classList.remove("selected"); lCard.classList.add("wrong"); rCard.classList.add("wrong"); const entry = wordPool.find((w) => w.word === lCard.dataset.word);
+          if (entry) { entry.score = Math.max(1, entry.score - 1); savePool(); }
+          setTimeout(() => { lCard.classList.remove("wrong"); rCard.classList.remove("wrong"); }, 520);
+        }
+      }
+    }
+
+    function renderFillBlankGame() {
+      document.getElementById("activities-title").textContent = "Boşluk Doldurma";
+      const chosen = pickWeightedPoolWords(4), target = chosen[0];
+      const regex = new RegExp(`\\b${target.word}\\b`, "i");
+      const blankedSentence = regex.test(target.sentence) ? target.sentence.replace(regex, "________") : `${target.sentence} (________)`;
+      const options = chosen.map((c) => c.word).sort(() => Math.random() - 0.5);
+      document.getElementById("activities-content").innerHTML = `
+        <div style="display:flex; flex-direction:column; flex:1; justify-content:space-between;">
+          <div>
+            <div class="question-box">
+              <div class="badge-row"><span class="level-badge">${target.level}</span><span class="score-badge" id="fill-score-badge">Puan: ${target.score}/5</span></div>
+              <p style="font-size:17.5px; font-weight:700; line-height:1.55; margin-bottom:14px;">"${escapeHtml(blankedSentence)}"</p>
+              <button type="button" class="btn-hint-cyan" onclick="document.getElementById('fill-hint-box').style.display='block'; this.style.display='none'; ">İpucu Göster</button>
+              <div id="fill-hint-box" class="hint-box" style="display:none;">Anlamı: ${escapeHtml(target.tr)}</div>
+            </div>
+            <div class="options-grid" id="fill-options">
+              ${options.map((opt, idx) => `<button class="option-btn opt-${idx}" onclick="handleFillAnswer(this, '${escapeAttr(opt)}', '${escapeAttr(target.word)}')"><span>${escapeHtml(opt)}</span></button>`).join("")}
+            </div>
+          </div>
+          <div id="fill-next-wrap" style="margin-top:18px; display:none;"><button class="btn-primary" onclick="runNextActivityStep()">Sonraki Soru</button></div>
+        </div>`;
+    }
+
+    function handleFillAnswer(btnEl, chosenWord, targetWord) {
+      const buttons = document.querySelectorAll("#fill-options .option-btn");
+      buttons.forEach((b) => (b.disabled = true));
+      const entry = wordPool.find((w) => w.word === targetWord);
+      const badge = document.getElementById("fill-score-badge");
+
+      if (chosenWord === targetWord) {
+        btnEl.classList.add("correct"); buttons.forEach((b) => { if (b !== btnEl) b.classList.add("dimmed"); }); fireConfetti(); recordPracticeProgress();
+        if (entry) {
+          entry.score = Math.min(5, entry.score + 1); savePool();
+          if (badge) { badge.textContent = `Puan: ${entry.score}/5`; badge.classList.add("pop"); }
+        }
+        setTimeout(() => { if (activityMode !== null) runNextActivityStep(); }, 920);
+      } else {
+        btnEl.classList.add("wrong"); buttons.forEach((b) => { if (b.textContent.trim() === targetWord) b.classList.add("correct"); else if (b !== btnEl) b.classList.add("dimmed"); }); if (entry) { entry.score = Math.max(1, entry.score - 1); savePool(); if (badge) badge.textContent = `Puan: ${entry.score}/5`; }
+        document.getElementById("fill-next-wrap").style.display = "block";
+      }
+    }
+
+    function escapeHtml(str) { return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function escapeAttr(str) { return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
+    loadState();
+  </script>
+</body>
+</html>
