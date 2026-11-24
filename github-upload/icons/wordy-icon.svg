@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Wordy">
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#1B4332"/>
+  <rect x="118" y="96" width="276" height="218" rx="28" fill="#7CA38E"/>
+  <rect x="96" y="132" width="320" height="230" rx="30" fill="#D8E4DC"/>
+  <rect x="316" y="144" width="102" height="54" rx="18" fill="#89CFF0"/>
+  <rect x="74" y="174" width="364" height="244" rx="32" fill="#FCFDFB"/>
+  <path d="M138 236h36l24 82 38-82h40l38 82 24-82h36l-40 124h-34l-44-86-44 86h-34l-40-124z" fill="#1B4332"/>
+</svg>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Wordy | Kelime Pratiği</title>
+  <meta name="description" content="Çevrimdışı çalışan günlük İngilizce kelime pratiği.">
+  <meta name="theme-color" id="meta-theme-color" content="#1B4332">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Wordy">
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icons/wordy-icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./css/tokens.css?v=10">
+  <link rel="stylesheet" href="./css/style.css?v=10">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Ana içeriğe geç</a>
+
+  <div class="app-layout">
+    <aside class="shell-rail" aria-label="Wordy menü ve günlük durum">
+      <div class="shell-top-row">
+        <div class="brand-lockup">
+          <svg class="brand-icon brand-logo-svg" viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+            <rect class="logo-bg" x="0" y="0" width="64" height="64" rx="14"></rect>
+            <rect class="logo-card-back" x="14.75" y="12" width="34.5" height="27.25" rx="3.5"></rect>
+            <rect class="logo-card-mid" x="12" y="16.5" width="40" height="28.75" rx="3.75"></rect>
+            <rect class="logo-notch" x="39.5" y="18" width="12.75" height="6.75" rx="2.25"></rect>
+            <rect class="logo-card-front" x="9.25" y="21.75" width="45.5" height="30.5" rx="4"></rect>
+            <path class="logo-letter" d="M17.25 29.5h4.5l3 10.25 4.75-10.25h5l4.75 10.25 3-10.25h4.5l-5 15.5h-4.25l-5.5-10.75-5.5 10.75h-4.25l-5-15.5z"></path>
+          </svg>
+          <div class="brand-text">
+            <span class="brand-name">Wordy</span>
+            <span class="brand-subtitle">Kelime Pratiği</span>
+          </div>
+        </div>
+
+        <div class="shell-mobile-actions">
+          <button
+            type="button"
+            id="btn-settings-mobile"
+            class="shell-icon-btn"
+            data-settings-toggle
+            aria-label="Ayarlar"
+            aria-expanded="false"
+            aria-controls="settings-popover"
+          >
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <circle cx="9" cy="6" r="2.1" fill="currentColor"></circle>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <circle cx="15" cy="12" r="2.1" fill="currentColor"></circle>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+              <circle cx="11" cy="18" r="2.1" fill="currentColor"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="rail-desktop-body">
+        <button
+          type="button"
+          id="btn-goal-desktop"
+          class="rail-goal-card"
+          data-action="open-calendar"
+          aria-label="Günlük hedef ve takvimi aç"
+        >
+          <span class="goal-ring-wrap" aria-hidden="true">
+            <svg class="goal-ring-svg" viewBox="0 0 44 44">
+              <circle class="goal-ring-track" cx="22" cy="22" r="18"></circle>
+              <circle class="goal-ring-progress" data-bind="goal-ring" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="113.1"></circle>
+            </svg>
+            <span class="goal-ring-pct" data-bind="goal-pct">0%</span>
+          </span>
+          <span class="goal-ring-meta">
+            <span class="goal-ring-label">Günlük Hedef</span>
+            <span class="goal-ring-value"><span data-bind="today-count">0</span> / <span data-bind="daily-goal">20</span></span>
+          </span>
+        </button>
+
+        <div class="rail-stats-grid">
+          <div class="rail-stat-box">
+            <span class="rail-stat-label">Seri</span>
+            <span class="rail-stat-value"><span data-bind="streak-count">0</span> gün</span>
+          </div>
+          <div class="rail-stat-box">
+            <span class="rail-stat-label">Öğrenilen</span>
+            <span class="rail-stat-value" data-bind="mastered-count">0</span>
+          </div>
+        </div>
+
+        <div class="rail-footer-phone">
+          <button
+            type="button"
+            class="rail-phone-trigger"
+            data-action="toggle-rail-phone"
+            aria-expanded="false"
+            aria-controls="rail-phone-panel"
+          >
+            <span class="rail-pref-left">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="6" y="2" width="12" height="20" rx="2.5"></rect>
+                <line x1="11" y1="18" x2="13" y2="18"></line>
+              </svg>
+              Telefonda Kullan
+            </span>
+            <svg class="svg-icon-sm phone-bar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div id="rail-phone-panel" class="rail-phone-panel">
+            <div class="rail-phone-inner">
+              <div class="rail-phone-content">
+                <div class="rail-phone-shareable" data-phone-shareable hidden>
+                  <p class="rail-phone-text">iPhone'da Paylaş &gt; Ana Ekrana Ekle, Android'de Uygulamayı Yükle ile ana ekranına ekleyebilirsin.</p>
+                  <p id="rail-phone-url" class="rail-phone-url mono-num"></p>
+                  <button type="button" class="rail-pref-btn" data-action="copy-app-link">
+                    <span class="rail-pref-left">Bağlantıyı Kopyala</span>
+                    <span class="rail-pref-state">Kopyala</span>
+                  </button>
+                </div>
+                <p class="rail-phone-text" data-phone-local-only>Bu bağlantı yalnızca bu bilgisayarda açılır. Telefonda açmak için yerel ağ veya canlı tünel bağlantısını kullan.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-content" class="workspace">
+      <div class="workspace-topbar">
+        <button
+          type="button"
+          id="btn-settings-desktop"
+          class="workspace-settings-btn"
+          data-settings-toggle
+          aria-label="Ayarlar"
+          aria-expanded="false"
+          aria-controls="settings-popover"
+        >
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <circle cx="9" cy="6" r="2.1" fill="currentColor"></circle>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <circle cx="15" cy="12" r="2.1" fill="currentColor"></circle>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+            <circle cx="11" cy="18" r="2.1" fill="currentColor"></circle>
+          </svg>
+        </button>
+      </div>
+
+      <div id="settings-popover" class="settings-popover" role="region" aria-label="Ayarlar" aria-hidden="true">
+        <p class="settings-popover-title">Ayarlar</p>
+        <button type="button" class="setting-toggle-row" data-pref-toggle="sound" aria-pressed="true">
+          <span class="setting-toggle-label">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            Ses Efektleri
+          </span>
+          <span class="setting-row-right">
+            <span class="setting-state-text" data-bind="sound-label">Açık</span>
+            <span class="setting-switch" aria-hidden="true"><span class="setting-switch-thumb"></span></span>
+          </span>
+        </button>
+
+        <button type="button" class="setting-toggle-row" data-pref-toggle="haptic" aria-pressed="true">
+          <span class="setting-toggle-label">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="7" y="4" width="10" height="16" rx="2"></rect>
+              <path d="M3 8v8"></path>
+              <path d="M21 8v8"></path>
+            </svg>
+            Titreşim
+          </span>
+          <span class="setting-row-right">
+            <span class="setting-state-text" data-bind="haptic-label">Açık</span>
+            <span class="setting-switch" aria-hidden="true"><span class="setting-switch-thumb"></span></span>
+          </span>
+        </button>
+
+        <button type="button" id="btn-theme-toggle" class="setting-toggle-row" aria-pressed="false" aria-label="Görünüm temasını değiştir">
+          <span class="setting-toggle-label">
+            <svg class="svg-icon-sm theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="svg-icon-sm theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+              <circle cx="12" cy="12" r="4"></circle>
+              <line x1="12" y1="2" x2="12" y2="5"></line>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+              <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"></line>
+              <line x1="16.95" y1="16.95" x2="19.07" y2="19.07"></line>
+              <line x1="2" y1="12" x2="5" y2="12"></line>
+              <line x1="19" y1="12" x2="22" y2="12"></line>
+              <line x1="4.93" y1="19.07" x2="7.05" y2="16.95"></line>
+              <line x1="16.95" y1="7.05" x2="19.07" y2="4.93"></line>
+            </svg>
+            Görünüm
+          </span>
+          <span class="setting-row-right">
+            <span class="setting-state-text" data-bind="theme-label">Açık</span>
+            <span class="setting-switch" aria-hidden="true"><span class="setting-switch-thumb"></span></span>
+          </span>
+        </button>
+
+        <div class="settings-divider" aria-hidden="true"></div>
+        <p class="settings-popover-title">Tema Renkleri</p>
+        <div class="palette-list" role="group" aria-label="Tema renk paleti">
+          <button type="button" class="palette-option-btn" data-palette-option="forest" aria-pressed="true">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Orman</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="plum" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Mor &amp; Gül</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="ocean" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Okyanus</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="crimson" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Kızıl &amp; Taş</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="olive" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Zeytin &amp; Kil</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="rose" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Pembe &amp; Mor</span>
+          </button>
+          <button type="button" class="palette-option-btn" data-palette-option="cobalt" aria-pressed="false">
+            <span class="palette-dots" aria-hidden="true">
+              <span class="palette-dot palette-dot-p"></span>
+              <span class="palette-dot palette-dot-o"></span>
+              <span class="palette-dot palette-dot-a"></span>
+            </span>
+            <span class="palette-option-name">Mavi &amp; Lacivert</span>
+          </button>
+        </div>
+      </div>
+      <section class="hero-card" aria-labelledby="hero-heading">
+        <div class="hero-mobile-metrics">
+          <button
+            type="button"
+            id="btn-goal-mobile"
+            class="goal-ring-btn"
+            data-action="open-calendar"
+            aria-label="Günlük hedef ve takvimi aç"
+          >
+            <span class="goal-ring-wrap" aria-hidden="true">
+              <svg class="goal-ring-svg" viewBox="0 0 44 44">
+                <circle class="goal-ring-track" cx="22" cy="22" r="18"></circle>
+                <circle class="goal-ring-progress" data-bind="goal-ring" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="113.1"></circle>
+              </svg>
+              <span class="goal-ring-pct" data-bind="goal-pct">0%</span>
+            </span>
+            <span class="goal-ring-meta">
+              <span class="goal-ring-label">Bugün</span>
+              <span class="goal-ring-value"><span data-bind="today-count">0</span>/<span data-bind="daily-goal">20</span></span>
+            </span>
+          </button>
+
+          <div class="metric-chip" aria-label="Günlük seri">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2c.5 4-3 6-3 10a5 5 0 0 0 10 0c0-3-1.5-5.5-3.5-7.5-.5 2-2 3-3.5 2.5C12.5 5 12.5 3.5 12 2z"></path>
+            </svg>
+            <span>Seri <strong class="mono-num" data-bind="streak-count">0</strong></span>
+          </div>
+
+          <button type="button" class="metric-chip metric-chip-weak" id="hero-weak-chip" data-action="open-weak-review" aria-label="Tekrar gereken kelimeleri çalış">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span data-bind="weak-label">0 tekrar</span>
+          </button>
+        </div>
+
+        <div class="hero-header">
+          <div>
+            <h1 id="hero-heading" class="hero-title">Tekrar Et</h1>
+            <p class="hero-desc">Kelimeleri cümle içinde çalış. Zorlandığın kelimeler kısa süre sonra tekrar karşına çıkar.</p>
+          </div>
+          <div class="hero-level-tags" id="hero-selected-levels" aria-label="Seçili seviyeler"></div>
+        </div>
+
+        <div class="hero-archive-strip">
+          <div class="archive-strip-stat">
+            <span>Sözlük</span>
+            <strong data-bind="dict-total">551</strong>
+          </div>
+          <div class="archive-strip-stat">
+            <span>Tekrar</span>
+            <strong data-bind="weak-count">0</strong>
+          </div>
+          <div class="archive-strip-stat">
+            <span>Öğrenilen</span>
+            <strong data-bind="mastered-count">0</strong>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button type="button" id="btn-open-review" class="btn-primary">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="6 4 20 12 6 20 6 4"></polygon>
+            </svg>
+            <span>Tekrarı Başlat</span>
+          </button>
+
+          <button type="button" id="btn-hero-weak-quick" class="btn-weak-cta" data-action="open-weak-review" hidden>
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Zorlandıklarım (<span class="mono-num" data-bind="weak-count">0</span>)</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="secondary-section" aria-labelledby="secondary-heading">
+        <h2 id="secondary-heading" class="sr-only">Çalışma Araçları</h2>
+        <div class="secondary-grid">
+          <button type="button" id="btn-open-pool" class="action-card">
+            <span class="action-card-main">
+              <span class="action-card-icon" aria-hidden="true">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2.5"></rect>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+              </span>
+              <span class="action-card-copy">
+                <span class="action-card-title">Kelime Havuzum</span>
+                <span class="action-card-desc">Kelimelerini ara, düzenle, yenilerini ekle veya yedekle.</span>
+              </span>
+            </span>
+            <span class="action-card-meta">
+              <span class="count-badge"><span data-bind="pool-count">0</span> kelime</span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          </button>
+
+          <button type="button" id="btn-open-activities" class="action-card">
+            <span class="action-card-main">
+              <span class="action-card-icon action-card-icon-baby" aria-hidden="true">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="8" height="8" rx="1.8"></rect>
+                  <rect x="13" y="3" width="8" height="8" rx="1.8"></rect>
+                  <rect x="3" y="13" width="8" height="8" rx="1.8"></rect>
+                  <rect x="13" y="13" width="8" height="8" rx="1.8"></rect>
+                </svg>
+              </span>
+              <span class="action-card-copy">
+                <span class="action-card-title">Etkinlikler</span>
+                <span class="action-card-desc">Eşleştirme, boşluk doldurma, dinleme, kartlar ve yazma pratiği.</span>
+              </span>
+            </span>
+            <span class="action-card-meta">
+              <span class="count-badge">6 mod</span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section class="phone-bar phone-bar-mobile" aria-label="Telefonda Kullan">
+        <button
+          type="button"
+          id="btn-phone-bar"
+          class="phone-bar-trigger"
+          aria-expanded="false"
+          aria-controls="phone-bar-panel"
+        >
+          <span class="phone-bar-trigger-left">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="6" y="2" width="12" height="20" rx="2.5"></rect>
+              <line x1="11" y1="18" x2="13" y2="18"></line>
+            </svg>
+            <span>Telefonda Kullan</span>
+          </span>
+          <svg class="svg-icon-sm phone-bar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div id="phone-bar-panel" class="phone-bar-panel">
+          <div class="phone-bar-inner">
+            <div class="phone-bar-content">
+              <div class="phone-shareable-wrap" data-phone-shareable hidden>
+                <p class="phone-guide-text">iPhone'da <strong>Paylaş &gt; Ana Ekrana Ekle</strong>, Android'de <strong>Uygulamayı Yükle</strong> ile ana ekranına ekleyebilirsin.</p>
+                <div class="phone-link-row">
+                  <input type="text" id="phone-link-input" class="phone-link-input" readonly aria-label="Uygulama bağlantısı">
+                  <button type="button" class="btn-secondary" data-action="copy-app-link">Kopyala</button>
+                </div>
+              </div>
+              <p class="phone-guide-text" data-phone-local-only>Bu bağlantı yalnızca bu bilgisayarda açılır. Telefonda açmak için yerel ağ veya canlı tünel bağlantısını kullan.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="kbd-legend" aria-label="Klavye kısayolları">
+        <span class="kbd-item"><kbd class="kbd-cap">1-4</kbd> Şık seç</span>
+        <span class="kbd-item"><kbd class="kbd-cap">Space</kbd> Dinle / Çevir</span>
+        <span class="kbd-item"><kbd class="kbd-cap">←/→</kbd> Kartı değerlendir</span>
+        <span class="kbd-item"><kbd class="kbd-cap">Enter</kbd> Sonraki</span>
+        <span class="kbd-item"><kbd class="kbd-cap">Esc</kbd> Kapat</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL: TEKRAR ET ==================== -->
+  <div id="modal-review" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-review-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-review-title" class="modal-title">Tekrar Et</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-review" aria-label="Tekrar penceresini kapat">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+      <div class="modal-body">
+        <div id="review-setup-view" class="view-panel">
+          <h3 class="section-heading">Seviye Seç</h3>
+          <p class="section-sub">İstediğin seviyeleri seç veya tüm kelimeleri karışık çalış.</p>
+          <div id="review-level-grid" class="level-grid" role="group" aria-label="Kelime seviyeleri"></div>
+          <button type="button" id="btn-level-mix" class="btn-secondary level-mix-btn" aria-pressed="false">
+            Tüm Seviyeler (A1-C2)
+          </button>
+
+          <h3 class="section-heading">Çalışma Yönü</h3>
+          <div id="review-direction-group" class="segmented-group" role="group" aria-label="Çalışma yönü">
+            <button type="button" class="segmented-btn" data-direction="en-tr" aria-pressed="true">EN → TR</button>
+            <button type="button" class="segmented-btn" data-direction="tr-en" aria-pressed="false">TR → EN</button>
+            <button type="button" class="segmented-btn" data-direction="mixed" aria-pressed="false">Karışık</button>
+          </div>
+
+          <div class="setup-cta-stack">
+            <button type="button" id="btn-start-review" class="btn-primary">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+              </svg>
+              <span>Başla</span>
+            </button>
+            <button type="button" id="btn-start-weak-review" class="btn-weak-cta" disabled>
+              Tekrar Gereken Kelime Yok
+            </button>
+          </div>
+        </div>
+
+        <div id="review-quiz-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" id="btn-review-back" class="btn-secondary">Seviyeler</button>
+            <div class="quiz-topbar-badges">
+              <span class="cefr-chip cefr-chip-accent" id="review-mode-chip">EN → TR</span>
+              <span class="count-badge" id="review-step-badge">Soru 1</span>
+            </div>
+          </div>
+
+          <div class="quiz-card">
+            <div class="quiz-card-head">
+              <span class="cefr-chip cefr-chip-accent" id="review-word-level">B2</span>
+              <div id="review-mastery-slot"></div>
+            </div>
+
+            <div class="quiz-word-row">
+              <h3 id="review-word-text" class="quiz-word">word</h3>
+              <button type="button" id="btn-speak-word" class="audio-btn" aria-label="Kelimeyi sesli dinle">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span>Dinle</span>
+              </button>
+            </div>
+
+            <div id="review-sentence-box" class="sentence-box">
+              <p id="review-sentence-text" class="sentence-text"></p>
+              <button type="button" id="btn-speak-sentence" class="audio-btn" aria-label="Örnek cümleyi sesli dinle">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span>Cümle</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="review-options" class="options-list" role="group" aria-label="Türkçe anlam seçenekleri"></div>
+
+          <div class="quiz-footer-actions">
+            <span class="form-status" id="review-queue-note"></span>
+            <button type="button" id="btn-review-next" class="btn-primary" hidden>Devam Et</button>
+          </div>
+        </div>
+
+        <div id="review-empty-weak-view" class="view-panel" hidden>
+          <div class="empty-state">
+            <h3 class="empty-state-title">Tekrar gereken kelime kalmadı</h3>
+            <p class="empty-state-desc">Tüm kelimelerini öğrendin. Yeni kelimeler çalışmak için seviye seçip devam edebilirsin.</p>
+            <div class="summary-actions-row">
+              <button type="button" id="btn-weak-done-setup" class="btn-primary">Seviyelere Dön</button>
+              <button type="button" id="btn-weak-done-close" class="btn-secondary">Kapat</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="review-summary-view" class="view-panel" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: KELİME HAVUZUM ==================== -->
+  <div id="modal-pool" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-pool-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-pool-title" class="modal-title">Kelime Havuzum</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-pool" aria-label="Kelime havuzunu kapat">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+      <div class="modal-body">
+        <form id="pool-add-form" class="pool-add-form" novalidate>
+          <label for="pool-add-input" class="sr-only">İngilizce kelime ekle</label>
+          <input
+            type="text"
+            id="pool-add-input"
+            class="text-input"
+            placeholder="İngilizce kelime yaz (örn. apple, resilient)..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button type="submit" id="btn-pool-add" class="btn-primary btn-pool-add">Ekle</button>
+        </form>
+        <div id="pool-add-status" class="form-status" role="status" aria-live="polite"></div>
+
+        <section id="pool-custom-composer" class="custom-composer-card" aria-label="Yeni kelime ekle" hidden>
+          <form id="pool-custom-form" class="custom-composer-form" novalidate>
+            <h3 class="section-heading">Yeni Kelime Ekle</h3>
+            <p id="custom-en-ref" class="custom-en-ref" hidden></p>
+
+            <div class="pool-edit-grid">
+              <div class="form-field">
+                <label for="custom-word-input" class="field-label">İngilizce Kelime</label>
+                <input type="text" id="custom-word-input" class="text-input text-input-sm" autocomplete="off" spellcheck="false" required>
+              </div>
+              <div class="form-field form-field-level">
+                <label for="custom-level-select" class="field-label">Seviye</label>
+                <select id="custom-level-select" class="select-input">
+                  <option value="A1">A1</option>
+                  <option value="A2">A2</option>
+                  <option value="B1">B1</option>
+                  <option value="B2" selected>B2</option>
+                  <option value="C1">C1</option>
+                  <option value="C2">C2</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="custom-tr-input" class="field-label">Türkçe Anlam</label>
+              <input type="text" id="custom-tr-input" class="text-input text-input-sm" placeholder="Örn. dayanıklı, esnek" autocomplete="off" required>
+            </div>
+
+            <div class="form-field">
+              <label for="custom-sentence-input" class="field-label">Örnek Cümle (isteğe bağlı)</label>
+              <input type="text" id="custom-sentence-input" class="text-input text-input-sm" placeholder="Örn. She remained resilient under pressure." autocomplete="off">
+            </div>
+
+            <div id="custom-composer-error" class="form-status is-error" role="status" aria-live="polite" hidden></div>
+
+            <div class="pool-edit-actions">
+              <button type="submit" id="btn-custom-save" class="btn-primary btn-compact">Kaydet</button>
+              <button type="button" id="btn-custom-cancel" class="btn-secondary btn-compact">Vazgeç</button>
+            </div>
+          </form>
+        </section>
+
+        <div class="pool-controls">
+          <div class="pool-search-wrap">
+            <label for="pool-search-input" class="sr-only">Havuzda kelime, anlam veya cümle ara</label>
+            <input
+              type="search"
+              id="pool-search-input"
+              class="text-input pool-search-input"
+              placeholder="Kelime, Türkçe anlam veya cümle ara..."
+              autocomplete="off"
+            >
+          </div>
+
+          <div id="pool-filter-pills" class="filter-pills" role="group" aria-label="Seviye filtresi"></div>
+
+          <div class="pool-toolbar-row">
+            <label for="pool-sort-select" class="sr-only">Sıralama</label>
+            <select id="pool-sort-select" class="select-input">
+              <option value="recent">En Yeni Eklenen</option>
+              <option value="score-asc">Önce Zorlandıklarım</option>
+              <option value="score-desc">Önce Öğrendiklerim</option>
+              <option value="alpha">Alfabetik (A-Z)</option>
+            </select>
+
+            <button
+              type="button"
+              id="btn-reset-pool"
+              class="hold-btn"
+              aria-label="Tüm havuzu sıfırlamak için basılı tut"
+            >
+              <span class="hold-btn-fill" aria-hidden="true"></span>
+              <span class="hold-btn-label">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                </svg>
+                <span>Basılı Tut: Sıfırla</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="pool-backup-row">
+            <button type="button" id="btn-pool-export" class="btn-secondary btn-compact">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Yedekle</span>
+            </button>
+
+            <button type="button" id="btn-pool-import-trigger" class="btn-secondary btn-compact">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>Geri Yükle</span>
+            </button>
+            <label for="pool-import-file" class="sr-only">JSON yedek dosyası seç</label>
+            <input type="file" id="pool-import-file" class="sr-only" accept="application/json,.json">
+          </div>
+
+          <div id="pool-import-chooser" class="import-chooser-card" hidden>
+            <p id="pool-import-filename" class="import-chooser-title"></p>
+            <div class="pool-edit-actions">
+              <button type="button" id="btn-import-merge" class="btn-primary btn-compact">Birleştir</button>
+              <button type="button" id="btn-import-replace" class="btn-secondary btn-compact">Üzerine Yaz</button>
+              <button type="button" id="btn-import-cancel" class="btn-secondary btn-compact">Vazgeç</button>
+            </div>
+          </div>
+          <div id="pool-import-status" class="form-status" role="status" aria-live="polite"></div>
+        </div>
+
+        <div id="pool-list" class="pool-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ETKİNLİKLER ==================== -->
+  <div id="modal-activities" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-activities-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-activities-title" class="modal-title">Etkinlikler</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-activities" aria-label="Etkinlikler penceresini kapat">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+      <div class="modal-body">
+        <div id="act-menu-view" class="view-panel">
+          <div id="act-empty-notice" class="empty-state" hidden>
+            <h3 class="empty-state-title">Etkinlikler için en az 4 kelime gerekli</h3>
+            <p class="empty-state-desc">Önce Tekrar Et ile birkaç kelime çalış ya da havuzuna kelime ekle.</p>
+            <button type="button" id="btn-act-go-review" class="btn-primary">Tekrar Et'e Geç</button>
+          </div>
+
+          <div id="act-menu-list" class="activity-menu">
+            <button type="button" class="activity-row-btn" data-activity="matching">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="7" height="6" rx="1.5"></rect>
+                    <rect x="14" y="4" width="7" height="6" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="6" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="6" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Eşleştirme</span>
+                  <span class="activity-row-desc">İngilizce kelimeleri Türkçe anlamlarıyla eşleştir.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="activity-row-btn" data-activity="fillblank">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 7h16"></path>
+                    <path d="M4 12h7"></path>
+                    <path d="M15 12h5"></path>
+                    <path d="M4 17h12"></path>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Boşluk Doldurma</span>
+                  <span class="activity-row-desc">Cümledeki boşluğa uygun kelimeyi seç.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="activity-row-btn" data-activity="listening">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Dinle &amp; Bil</span>
+                  <span class="activity-row-desc">Kelimeyi dinle, Türkçe anlamını bul.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="activity-row-btn" data-activity="flashcard">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="2.5"></rect>
+                    <path d="M8 12h8"></path>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Flashcard</span>
+                  <span class="activity-row-desc">Kartı çevir, bildiklerini sağa kaydır.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="activity-row-btn" data-activity="spelling">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Yazarak Pratik</span>
+                  <span class="activity-row-desc">Türkçe anlamdan İngilizce kelimeyi yaz.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="activity-row-btn" data-activity="mixed">
+              <span class="activity-row-left">
+                <span class="activity-row-icon" aria-hidden="true">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 3 21 3 21 8"></polyline>
+                    <line x1="4" y1="20" x2="21" y2="3"></line>
+                    <polyline points="21 16 21 21 16 21"></polyline>
+                    <line x1="15" y1="15" x2="21" y2="21"></line>
+                    <line x1="4" y1="4" x2="9" y2="9"></line>
+                  </svg>
+                </span>
+                <span>
+                  <span class="activity-row-title">Karışık Mod</span>
+                  <span class="activity-row-desc">Tüm etkinlikler karışık sırayla gelir.</span>
+                </span>
+              </span>
+              <svg class="svg-icon-sm action-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Matching -->
+        <div id="act-matching-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" class="btn-secondary" data-act-back>Modlar</button>
+            <span class="count-badge" id="match-progress-badge">0 / 4</span>
+          </div>
+          <p class="section-sub">Soldan bir İngilizce kelime, sağdan Türkçe karşılığını seç.</p>
+          <div class="match-grid">
+            <div id="match-en-col" class="match-col" role="group" aria-label="İngilizce kelimeler"></div>
+            <div id="match-tr-col" class="match-col" role="group" aria-label="Türkçe anlamlar"></div>
+          </div>
+          <div id="match-feedback" class="feedback-banner" role="status" aria-live="polite"></div>
+          <button type="button" id="btn-match-next" class="btn-primary" hidden>Yeni Tur</button>
+        </div>
+
+        <!-- Fill in the Blank -->
+        <div id="act-fillblank-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" class="btn-secondary" data-act-back>Modlar</button>
+            <div id="fb-mastery-slot"></div>
+          </div>
+
+          <div class="quiz-card">
+            <div class="quiz-card-head">
+              <span class="cefr-chip cefr-chip-accent" id="fb-word-level">B2</span>
+              <button type="button" id="btn-fb-hint" class="btn-hint">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>İpucu</span>
+              </button>
+            </div>
+
+            <div class="sentence-box">
+              <p id="fb-sentence-text" class="sentence-text"></p>
+              <button type="button" id="btn-fb-speak-sentence" class="audio-btn" aria-label="Örnek cümleyi sesli dinle" hidden>
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span>Cümle</span>
+              </button>
+            </div>
+            <div id="fb-hint-box" class="hint-box" hidden></div>
+          </div>
+
+          <div id="fb-options" class="options-list" role="group" aria-label="Boşluk doldurma seçenekleri"></div>
+          <div id="fb-feedback" class="feedback-banner" role="status" aria-live="polite"></div>
+          <button type="button" id="btn-fb-next" class="btn-primary" hidden>Sonraki Soru</button>
+        </div>
+
+        <!-- Dinle & Bil (Listening) -->
+        <div id="act-listening-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" class="btn-secondary" data-act-back>Modlar</button>
+            <div id="listen-mastery-slot"></div>
+          </div>
+
+          <div class="quiz-card listen-card">
+            <div class="quiz-card-head">
+              <span class="cefr-chip cefr-chip-accent" id="listen-word-level">B2</span>
+              <span class="count-badge">Dinle &amp; Bil</span>
+            </div>
+
+            <div class="listen-hero">
+              <button type="button" id="btn-listen-play" class="listen-play-btn" aria-label="Kelimeyi sesli oynat">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+                <span>Tekrar Dinle</span>
+              </button>
+
+              <button type="button" id="btn-listen-slow" class="btn-secondary listen-slow-btn" aria-pressed="false">
+                0.8x Yavaş
+              </button>
+            </div>
+            <p class="listen-cue">Duyduğun kelimenin anlamını seç.</p>
+
+            <div id="listen-reveal-box" class="listen-reveal-box" hidden>
+              <p id="listen-revealed-word" class="listen-revealed-word"></p>
+              <div id="listen-sentence-row" class="sentence-box">
+                <p id="listen-sentence-text" class="sentence-text"></p>
+                <button type="button" id="btn-listen-speak-sentence" class="audio-btn" aria-label="Örnek cümleyi sesli dinle">
+                  <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                  <span>Cümle</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="listen-options" class="options-list" role="group" aria-label="Türkçe anlam seçenekleri"></div>
+          <div id="listen-feedback" class="feedback-banner" role="status" aria-live="polite"></div>
+          <button type="button" id="btn-listen-next" class="btn-primary" hidden>Sonraki Soru</button>
+        </div>
+
+        <!-- Flashcard -->
+        <div id="act-flashcard-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" class="btn-secondary" data-act-back>Modlar</button>
+            <span class="count-badge" id="fc-step-badge">Kart 1</span>
+          </div>
+
+          <div class="flashcard-stage">
+            <div id="fc-card" class="flashcard-card" tabindex="0" role="button" aria-pressed="false" aria-label="Flashcard kartını çevir">
+              <span class="flashcard-drag-badge is-know" aria-hidden="true">Biliyorum</span>
+              <span class="flashcard-drag-badge is-again" aria-hidden="true">Tekrar Et</span>
+
+              <div class="flashcard-face flashcard-face-front">
+                <div class="quiz-card-head">
+                  <span class="cefr-chip cefr-chip-accent" id="fc-word-level">B2</span>
+                  <div id="fc-mastery-slot"></div>
+                </div>
+                <div class="flashcard-center">
+                  <h3 id="fc-word-text" class="flashcard-word">word</h3>
+                  <button type="button" id="btn-fc-speak-word" class="audio-btn" aria-label="Kelimeyi sesli dinle">
+                    <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    <span>Dinle</span>
+                  </button>
+                </div>
+                <p class="flashcard-cue">Çevirmek için dokun veya Space'e bas</p>
+              </div>
+
+              <div class="flashcard-face flashcard-face-back">
+                <div class="quiz-card-head">
+                  <span class="cefr-chip" id="fc-back-word">word</span>
+                  <span class="count-badge">Arka Yüz</span>
+                </div>
+                <div class="flashcard-center">
+                  <p id="fc-meaning-text" class="flashcard-meaning"></p>
+                  <div id="fc-sentence-box" class="sentence-box">
+                    <p id="fc-sentence-text" class="sentence-text"></p>
+                    <button type="button" id="btn-fc-speak-sentence" class="audio-btn" aria-label="Örnek cümleyi sesli dinle">
+                      <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                      </svg>
+                      <span>Cümle</span>
+                    </button>
+                  </div>
+                </div>
+                <p class="flashcard-cue">Sağa kaydır: Biliyorum, sola kaydır: Tekrar et</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-controls" role="group" aria-label="Flashcard değerlendirme butonları">
+            <button type="button" id="btn-fc-again" class="btn-fc-again">Tekrar Et (←)</button>
+            <button type="button" id="btn-fc-flip" class="btn-secondary">Çevir (Space)</button>
+            <button type="button" id="btn-fc-know" class="btn-fc-know">Biliyorum (→)</button>
+          </div>
+
+          <div id="fc-feedback" class="feedback-banner" role="status" aria-live="polite"></div>
+        </div>
+
+        <!-- Yazarak Pratik (Spelling) -->
+        <div id="act-spelling-view" class="view-panel" hidden>
+          <div class="quiz-topbar">
+            <button type="button" class="btn-secondary" data-act-back>Modlar</button>
+            <div id="spell-mastery-slot"></div>
+          </div>
+
+          <div class="quiz-card">
+            <div class="quiz-card-head">
+              <span class="cefr-chip cefr-chip-accent" id="spell-word-level">B2</span>
+              <button type="button" id="btn-spell-hint" class="btn-hint">
+                <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>1 Harf Aç</span>
+              </button>
+            </div>
+
+            <h3 id="spell-meaning" class="spell-meaning">anlam</h3>
+            <p id="spell-mask" class="spell-mask-box mono-num" aria-label="Harf kalıbı ipucu"></p>
+
+            <div id="spell-sentence-box" class="sentence-box">
+              <p id="spell-sentence-text" class="sentence-text"></p>
+              <div class="spell-audio-btns">
+                <button type="button" id="btn-spell-speak-word" class="audio-btn" aria-label="Kelimeyi sesli dinle" hidden>
+                  <span>Kelime</span>
+                </button>
+                <button type="button" id="btn-spell-speak-sentence" class="audio-btn" aria-label="Örnek cümleyi sesli dinle" hidden>
+                  <span>Cümle</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <form id="spell-form" class="spell-form" novalidate>
+            <label for="spell-input" class="sr-only">İngilizce kelimeyi yaz</label>
+            <input
+              type="text"
+              id="spell-input"
+              class="text-input spell-input"
+              placeholder="İngilizce kelimeyi yaz..."
+              autocomplete="off"
+              spellcheck="false"
+              autocapitalize="none"
+            >
+            <button type="submit" id="btn-spell-submit" class="btn-primary spell-submit-btn">Kontrol Et</button>
+          </form>
+
+          <div id="spell-diff" class="spell-diff" role="status" aria-live="polite" hidden></div>
+          <div id="spell-feedback" class="feedback-banner" role="status" aria-live="polite"></div>
+          <button type="button" id="btn-spell-next" class="btn-primary" hidden>Sonraki Kelime</button>
+        </div>
+
+        <!-- Activity Session Summary -->
+        <div id="act-summary-view" class="view-panel" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: GÜNLÜK HEDEF & TAKVİM ==================== -->
+  <div id="modal-calendar" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-calendar-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-calendar-title" class="modal-title">Günlük Hedef</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-calendar" aria-label="Günlük hedef penceresini kapat">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+      <div class="modal-body">
+        <div class="cal-hero-strip">
+          <div class="cal-hero-left">
+            <span class="cal-hero-ring-wrap" aria-hidden="true">
+              <svg class="cal-hero-ring-svg" viewBox="0 0 56 56">
+                <circle class="goal-ring-track" cx="28" cy="28" r="23"></circle>
+                <circle id="cal-today-ring" class="goal-ring-progress" cx="28" cy="28" r="23" stroke-dasharray="144.5" stroke-dashoffset="144.5"></circle>
+              </svg>
+              <span id="cal-today-pct" class="cal-hero-ring-pct mono-num">0%</span>
+            </span>
+            <div class="cal-hero-copy">
+              <p class="cal-hero-value">
+                <strong class="mono-num"><span data-bind="today-count">0</span> / <span data-bind="daily-goal">20</span></strong>
+                <span>kelime</span>
+              </p>
+              <p id="cal-today-status" class="cal-hero-sub">Bugün çalışmaya başla</p>
+            </div>
+          </div>
+          <div class="cal-streak-pill" aria-label="Güncel çalışma serisi">
+            <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2c.5 4-3 6-3 10a5 5 0 0 0 10 0c0-3-1.5-5.5-3.5-7.5-.5 2-2 3-3.5 2.5C12.5 5 12.5 3.5 12 2z"></path>
+            </svg>
+            <span class="mono-num"><span data-bind="streak-count">0</span> gün</span>
+          </div>
+        </div>
+
+        <section class="cal-card" aria-label="Aylık çalışma takvimi">
+          <div class="cal-nav">
+            <button type="button" id="btn-cal-prev" class="cal-nav-btn" aria-label="Önceki ay">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <p id="cal-month-label" class="cal-month-label">Kasım 2026</p>
+            <button type="button" id="btn-cal-next" class="cal-nav-btn" aria-label="Sonraki ay">
+              <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="cal-weekdays" aria-hidden="true">
+            <span>Pzt</span>
+            <span>Sal</span>
+            <span>Çar</span>
+            <span>Per</span>
+            <span>Cum</span>
+            <span>Cmt</span>
+            <span>Paz</span>
+          </div>
+
+          <div id="cal-grid" class="cal-grid" role="grid" aria-label="Günlük ilerleme takvimi"></div>
+          <p id="cal-day-detail" class="cal-day-detail" role="status" aria-live="polite"></p>
+        </section>
+
+        <div class="cal-controls-row">
+          <div class="cal-section">
+            <p class="cal-section-title">Günlük Kelime Hedefi</p>
+            <div class="goal-options-grid" role="group" aria-label="Günlük hedef seçenekleri">
+              <button type="button" class="goal-option-btn" data-goal-option="10" aria-pressed="false">10</button>
+              <button type="button" class="goal-option-btn" data-goal-option="20" aria-pressed="true">20</button>
+              <button type="button" class="goal-option-btn" data-goal-option="30" aria-pressed="false">30</button>
+              <button type="button" class="goal-option-btn" data-goal-option="50" aria-pressed="false">50</button>
+            </div>
+          </div>
+
+          <div class="cal-section">
+            <div class="cal-section-head">
+              <p class="cal-section-title">Halka Rengi</p>
+              <span id="cal-ring-color-name" class="cal-section-value">Tema</span>
+            </div>
+            <div class="ring-color-grid" role="group" aria-label="Halka rengi seçenekleri">
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="theme" aria-pressed="true" aria-label="Tema"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="blue" aria-pressed="false" aria-label="Mavi"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="pink" aria-pressed="false" aria-label="Pembe"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="red" aria-pressed="false" aria-label="Kırmızı"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="green" aria-pressed="false" aria-label="Yeşil"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="purple" aria-pressed="false" aria-label="Mor"></button>
+              <button type="button" class="ring-swatch-btn" data-ring-color-option="yellow" aria-pressed="false" aria-label="Sarı"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/confetti.js?v=10"></script>
+  <script src="./js/dictionary.js?v=10"></script>
+  <script src="./js/store.js?v=10"></script>
+  <script src="./js/srs.js?v=10"></script>
+  <script src="./js/audio.js?v=10"></script>
+  <script src="./js/effects.js?v=10"></script>
+  <script src="./js/modes.js?v=10"></script>
+  <script src="./js/pool.js?v=10"></script>
+  <script src="./js/app.js?v=10"></script>
+</body>
+</html>
